@@ -446,6 +446,9 @@
 <script>
 (function(){
   "use strict";
+  window.addEventListener("error", (e)=>{
+  alert("Erro no JS: " + e.message);
+});
 
   // ===== Utils =====
   const $ = (id)=>document.getElementById(id);
@@ -1036,10 +1039,21 @@ function refreshPlayerUI(){
   const p = ensureProfile(activeName);
   ui.kPlayer.textContent = activeName;
   ui.kBest.textContent = String(p.best);
-  if(ui.nameLabel) ui.nameLabel.textContent = activeName;
-  if(ui.playerName) ui.playerName.value = activeName === "Visitante" ? "" : activeName;
-  saveProfiles(profiles);
+  if (ui.playerName && typeof ui.playerName.value !== "undefined") {
+  ui.playerName.value = (activeName === "Visitante") ? "" : activeName;
 }
+if (ui.btnSaveName) {
+  ui.btnSaveName.addEventListener("click", ()=> setPlayer(ui.playerName ? ui.playerName.value : ""));
+}
+if (ui.playerName) {
+  ui.playerName.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+      e.preventDefault();
+      setPlayer(ui.playerName.value);
+    }
+  });
+}
+
 
 function setPlayer(nameRaw){
   const name = (nameRaw || "").trim();
@@ -1062,10 +1076,7 @@ ui.playerName?.addEventListener("keydown", (e)=>{
 
 refreshPlayerUI();
 
-  ui.kBest.textContent = String(state.best);
-  ui.kStreak.textContent = "0";
-  ui.kMode.textContent = "—";
-
+  
   let deck = [];
   let idx = -1;
   let answered = false;
@@ -1294,7 +1305,7 @@ ui.kBest.textContent = String(p.best);
     ui.fb.innerHTML = `
       <span class="tag">📌 Resumo</span>
       <b>Pontuação:</b> ${score}/${total} (${pct}%)<br>
-      <b>Melhor (histórico):</b> ${state.best}<br>
+      <b>Melhor (histórico):</b> ${ensureProfile(activeName).best}<br>
       <b>Série final:</b> ${streak}<br>
       <span class="small">Dica: mude a quantidade/tempo e clique em “Começar / Reiniciar”.</span>
     `;
@@ -1332,8 +1343,9 @@ ui.kBest.textContent = String(p.best);
     timeLeft = timeLimit;
     startTimer();
 
-    render();
-  }
+    setModeLabel();
+refreshPlayerUI();
+render();
 
   function resetAll(){
     stopTimer();
