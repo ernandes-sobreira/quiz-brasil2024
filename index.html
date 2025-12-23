@@ -351,13 +351,18 @@
         urbanismo/arborização (Censo 2022 – IBGE) e lista pública do Anuário (cidades mais violentas).
       </p>
       <div class="kpi">
+           <div class="k">
+  <div class="t">Jogador</div>
+  <div class="v" id="kPlayer">—</div>
+  <div class="s">salvo no aparelho</div>
+</div>
         <div class="k"><div class="t">Modo</div><div class="v" id="kMode">—</div><div class="s">Treino ou Prova</div></div>
         <div class="k"><div class="t">Melhor</div><div class="v" id="kBest">0</div><div class="s">maior pontuação</div></div>
         <div class="k"><div class="t">Série</div><div class="v" id="kStreak">0</div><div class="s">acertos seguidos</div></div>
         <div class="k"><div class="t">Banco</div><div class="v" id="kBank">0</div><div class="s">perguntas totais</div></div>
       </div>
     </div>
-
+ 
     <div class="grid">
       <div class="card" id="quizCard">
         <div class="qhead">
@@ -393,6 +398,13 @@
         </div>
 
         <div class="opts">
+          <div class="optline">
+  <div class="pill">Nome: <b id="nameLabel">—</b></div>
+  <input id="playerName" type="text" placeholder="Digite seu nome (ex: Ernandes)"
+         style="flex:1; min-width:180px; background:rgba(255,255,255,.06); color:var(--text);
+                border:1px solid var(--stroke); border-radius:12px; padding:10px 12px; outline:none;">
+  <button class="ghost" id="btnSaveName">Salvar</button>
+</div>
           <label class="chk"><input id="chkShuffleQ" type="checkbox" checked> Embaralhar perguntas</label>
           <label class="chk"><input id="chkShuffleA" type="checkbox" checked> Embaralhar alternativas</label>
           <label class="chk"><input id="chkTrain" type="checkbox"> Modo treino (feedback imediato)</label>
@@ -459,21 +471,34 @@
     return copy.slice(0,n);
   }
 
-  // ===== Persistent stats =====
-  const KEY = "quizBR_2024_v2";
-  const state = {
-    best: 0,
-    streakBest: 0
-  };
-  try{
-    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
-    if(Number.isFinite(saved.best)) state.best = saved.best;
-    if(Number.isFinite(saved.streakBest)) state.streakBest = saved.streakBest;
-  }catch(e){}
+ // ===== Persistent stats (por jogador) =====
+const PROFILES_KEY = "quizBR_2024_profiles_v1";
+const ACTIVE_KEY   = "quizBR_2024_active_player_v1";
 
-  function save(){
-    localStorage.setItem(KEY, JSON.stringify(state));
-  }
+function loadProfiles(){
+  try{ return JSON.parse(localStorage.getItem(PROFILES_KEY) || "{}"); }
+  catch(e){ return {}; }
+}
+function saveProfiles(p){
+  localStorage.setItem(PROFILES_KEY, JSON.stringify(p));
+}
+function getActiveName(){
+  return (localStorage.getItem(ACTIVE_KEY) || "").trim();
+}
+function setActiveName(name){
+  localStorage.setItem(ACTIVE_KEY, name.trim());
+}
+
+let profiles = loadProfiles();
+
+function ensureProfile(name){
+  if(!profiles[name]) profiles[name] = { best: 0, streakBest: 0, lastScore: 0, lastTotal: 0 };
+  return profiles[name];
+}
+
+let activeName = getActiveName() || "Visitante";
+ensureProfile(activeName);
+saveProfiles(profiles);
 
   // ===== Question Bank (curado) =====
   // Estrutura:
@@ -1000,8 +1025,42 @@ addQ("mixBR2","Brasil em números","Qual alternativa descreve corretamente o que
     selT: $("selT"),
     nLabel: $("nLabel"),
     tLabel: $("tLabel"),
-    hint: $("hint")
+    hint: $("hint"),
+      kPlayer: $("kPlayer"),
+  playerName: $("playerName"),
+  btnSaveName: $("btnSaveName"),
+  nameLabel: $("nameLabel"),
+
   };
+function refreshPlayerUI(){
+  const p = ensureProfile(activeName);
+  ui.kPlayer.textContent = activeName;
+  ui.kBest.textContent = String(p.best);
+  if(ui.nameLabel) ui.nameLabel.textContent = activeName;
+  if(ui.playerName) ui.playerName.value = activeName === "Visitante" ? "" : activeName;
+  saveProfiles(profiles);
+}
+
+function setPlayer(nameRaw){
+  const name = (nameRaw || "").trim();
+  activeName = name ? name : "Visitante";
+  ensureProfile(activeName);
+  setActiveName(activeName);
+  refreshPlayerUI();
+  toast("Jogador: " + activeName);
+}
+
+ui.btnSaveName?.addEventListener("click", ()=>{
+  setPlayer(ui.playerName.value);
+});
+ui.playerName?.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    setPlayer(ui.playerName.value);
+  }
+});
+
+refreshPlayerUI();
 
   ui.kBest.textContent = String(state.best);
   ui.kStreak.textContent = "0";
@@ -1207,13 +1266,16 @@ addQ("mixBR2","Brasil em números","Qual alternativa descreve corretamente o que
     const total = deck.length;
     const pct = total ? Math.round(score/total*100) : 0;
 
-    // best
-    if(score > state.best){
-      state.best = score;
-      save();
-    }
+    const p = ensureProfile(activeName);
+p.lastScore = score;
+p.lastTotal = total;
 
-    ui.kBest.textContent = String(state.best);
+if(score > p.best) p.best = score;
+if(streak > p.streakBest) p.streakBest = streak;
+
+saveProfiles(profiles);
+ui.kBest.textContent = String(p.best);
+
 
     ui.qText.innerHTML = byTime
       ? `⏰ Tempo! Você fez <b>${score}/${total}</b> (${pct}%).`
