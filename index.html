@@ -416,38 +416,14 @@
 (() => {
   "use strict";
 
-  // ===== Utils =====
+  // Se der erro, aparece na sua cara (pra não ficar “mudo”)
+  window.addEventListener("error", (e) => {
+    alert("Erro no JS: " + e.message + "\n" + (e.filename || "") + ":" + (e.lineno || ""));
+  });
+
   const $ = (id) => document.getElementById(id);
 
-  const toastEl = $("toast");
-  let toastT = null;
-  function toast(msg){
-    toastEl.textContent = msg;
-    toastEl.classList.add("show");
-    clearTimeout(toastT);
-    toastT = setTimeout(()=>toastEl.classList.remove("show"), 1700);
-  }
-
-  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-  function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]] = [arr[j],arr[i]];
-    }
-    return arr;
-  }
-  function pickN(arr, n){
-    const copy = arr.slice();
-    shuffle(copy);
-    return copy.slice(0, n);
-  }
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    }[m]));
-  }
-
-  // ===== UI =====
+  // ===== UI refs =====
   const ui = {
     kPlayer: $("kPlayer"),
     kBest: $("kBest"),
@@ -480,11 +456,45 @@
     playerName: $("playerName"),
     btnSaveName: $("btnSaveName"),
     nameLabel: $("nameLabel"),
-
     deltaLabel: $("deltaLabel"),
   };
 
-  // ===== Perfis (localStorage por nome) =====
+  // Confere se os elementos existem (se faltar 1 id, o JS para)
+  for (const [k, el] of Object.entries(ui)) {
+    if (!el) throw new Error("Elemento não encontrado: #" + k + " (verifique o id no HTML)");
+  }
+
+  // ===== Toast =====
+  const toastEl = $("toast");
+  let toastT = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastT);
+    toastT = setTimeout(()=>toastEl.classList.remove("show"), 1700);
+  }
+
+  // ===== Utils =====
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function pickN(arr, n){
+    const copy = arr.slice();
+    shuffle(copy);
+    return copy.slice(0, n);
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+  }
+
+  // ===== Perfis =====
   const PROFILES_KEY = "geoagro_quiz_profiles_v1";
   const ACTIVE_KEY   = "geoagro_quiz_active_player_v1";
 
@@ -492,22 +502,13 @@
     try { return JSON.parse(localStorage.getItem(PROFILES_KEY) || "{}"); }
     catch(e){ return {}; }
   }
-  function saveProfiles(p){
-    localStorage.setItem(PROFILES_KEY, JSON.stringify(p));
-  }
-  function getActiveName(){
-    return (localStorage.getItem(ACTIVE_KEY) || "").trim();
-  }
-  function setActiveName(name){
-    localStorage.setItem(ACTIVE_KEY, name.trim());
-  }
+  function saveProfiles(p){ localStorage.setItem(PROFILES_KEY, JSON.stringify(p)); }
+  function getActiveName(){ return (localStorage.getItem(ACTIVE_KEY) || "").trim(); }
+  function setActiveName(name){ localStorage.setItem(ACTIVE_KEY, name.trim()); }
 
   let profiles = loadProfiles();
-
   function ensureProfile(name){
-    if(!profiles[name]){
-      profiles[name] = { best: 0, streakBest: 0, lastScore: 0, lastTotal: 0 };
-    }
+    if(!profiles[name]) profiles[name] = { best:0, streakBest:0, lastScore:0, lastTotal:0 };
     return profiles[name];
   }
 
@@ -521,9 +522,7 @@
     ui.nameLabel.textContent = activeName;
     ui.kBest.textContent = String(p.best);
     ui.kStreakBest.textContent = String(p.streakBest);
-    ui.deltaLabel.textContent = (p.lastTotal > 0)
-      ? `Última: ${p.lastScore}/${p.lastTotal}`
-      : "—";
+    ui.deltaLabel.textContent = (p.lastTotal > 0) ? `Última: ${p.lastScore}/${p.lastTotal}` : "—";
   }
 
   function setPlayer(raw){
@@ -532,30 +531,23 @@
     ensureProfile(activeName);
     setActiveName(activeName);
     saveProfiles(profiles);
-
     ui.playerName.value = (activeName === "Visitante") ? "" : activeName;
     refreshPlayerUI();
     toast("Jogador: " + activeName);
   }
 
-  // Listeners de nome (uma vez só)
   ui.btnSaveName.addEventListener("click", () => setPlayer(ui.playerName.value));
   ui.playerName.addEventListener("keydown", (e) => {
-    if(e.key === "Enter"){
-      e.preventDefault();
-      setPlayer(ui.playerName.value);
-    }
+    if(e.key === "Enter"){ e.preventDefault(); setPlayer(ui.playerName.value); }
   });
 
-  // ===== Banco de perguntas =====
+  // ===== BANCO (2 perguntas de teste) =====
   const bank = [];
   function addQ(id, cat, q, a, correct, exp, src){
     if(!Array.isArray(a) || a.length !== 4) throw new Error("Questão sem 4 alternativas: " + id);
     bank.push({ id, cat, q, a, correct, exp, src });
   }
 
-  // >>>>>>> COLE O PACOTÃO AQUI (depois) <<<<<<<
-  // Por enquanto só 2 perguntas:
   addQ("Q1","Capitais","Qual é a capital do Amapá?",
     ["Macapá","Belém","Boa Vista","Rio Branco"], 0,
     "A capital do Amapá é Macapá.",
@@ -566,638 +558,27 @@
     "Mato Grosso é líder nacional em soja em séries recentes.",
     "Fonte: IBGE — PAM (séries recentes)."
   );
-// ---- PIB (IBGE, PIB UF 2023) ----
-  addQ("pib1","PIB por UF","Qual unidade da federação tem o MAIOR PIB (2023)?",
-    ["São Paulo","Rio de Janeiro","Minas Gerais","Paraná"],0,
-    "Em 2023, São Paulo lidera o PIB entre as UFs (R$ 3.444.814 milhões).",
-    "Fonte: IBGE — “Produto Interno Bruto - PIB”, tabela por UF (PIB 2023)."
-  );
-  addQ("pib2","PIB por UF","Qual unidade da federação tem o MENOR PIB (2023)?",
-    ["Roraima","Acre","Amapá","Tocantins"],0,
-    "Na tabela do IBGE para 2023, Roraima aparece com o menor PIB (R$ 25.125 milhões).",
-    "Fonte: IBGE — “Produto Interno Bruto - PIB”, tabela por UF (PIB 2023)."
-  );
-  addQ("pib3","PIB por UF","Qual UF tem PIB ~R$ 1,17 trilhão (2023)?",
-    ["Rio de Janeiro","Bahia","Distrito Federal","Santa Catarina"],0,
-    "O IBGE registra o PIB do RJ em 2023 como R$ 1.172.871 milhões (≈R$ 1,17 tri).",
-    "Fonte: IBGE — tabela por UF (PIB 2023)."
-  );
-  addQ("pib4","PIB por UF","Qual UF tem PIB ~R$ 971,9 bilhões (2023)?",
-    ["Minas Gerais","Rio Grande do Sul","Goiás","Pará"],0,
-    "Minas Gerais aparece com R$ 971.978 milhões na tabela do IBGE (2023).",
-    "Fonte: IBGE — tabela por UF (PIB 2023)."
-  );
-  addQ("pib5","PIB por UF","Qual dessas UFs tem PIB acima de R$ 500 bilhões (2023)?",
-    ["Santa Catarina","Mato Grosso do Sul","Pernambuco","Pará"],0,
-    "Em 2023, Santa Catarina registra R$ 513.393 milhões (acima de R$ 500 bi).",
-    "Fonte: IBGE — tabela por UF (PIB 2023)."
-  );
 
-  // ---- População (Estimativas IBGE 1º jul 2024) ----
-  addQ("pop1","População","Qual estado tem a MAIOR população estimada em 1º/07/2024?",
-    ["São Paulo","Minas Gerais","Rio de Janeiro","Bahia"],0,
-    "SP lidera com 45.973.194 habitantes (estimativa IBGE 2024).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop2","População","Qual estado tem a MENOR população estimada em 1º/07/2024?",
-    ["Roraima","Acre","Amapá","Tocantins"],0,
-    "Roraima aparece com 716.793 habitantes (estimativa IBGE 2024).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop3","População","Qual a população estimada do Brasil em 1º/07/2024 (IBGE)?",
-    ["212.583.750","203.100.000","220.400.000","197.800.000"],0,
-    "O IBGE divulgou 212.583.750 habitantes para o Brasil na data de referência 1º/07/2024.",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop4","População","Qual estado tem ~3,84 milhões de habitantes (estimativa 1º/07/2024)?",
-    ["Mato Grosso","Distrito Federal","Amazonas","Espírito Santo"],0,
-    "Mato Grosso aparece com 3.836.399 habitantes na estimativa de 2024.",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop5","População","Qual estado tem ~2,98 milhões de habitantes (estimativa 1º/07/2024)?",
-    ["Distrito Federal","Mato Grosso do Sul","Sergipe","Rio Grande do Norte"],0,
-    "Distrito Federal aparece com 2.982.818 habitantes na estimativa de 2024.",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-
-  // ---- IDHM (PNUD/Atlas Brasil – UFs 2010) ----
-  addQ("idhm1","IDH (IDHM)","Qual UF tem o MAIOR IDHM (2010)?",
-    ["Distrito Federal","São Paulo","Santa Catarina","Rio de Janeiro"],0,
-    "No ranking de 2010, o Distrito Federal é 1º com IDHM 0,824.",
-    "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010."
-  );
-  addQ("idhm2","IDH (IDHM)","Qual UF tem o MENOR IDHM (2010)?",
-    ["Maranhão","Alagoas","Piauí","Pará"],0,
-    "No ranking de 2010, o Maranhão aparece na última posição (IDHM 0,639).",
-    "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010."
-  );
-  addQ("idhm3","IDH (IDHM)","No IDHM 2010, quem está em 2º lugar?",
-    ["São Paulo","Santa Catarina","Goiás","Minas Gerais"],0,
-    "O ranking de UFs 2010 coloca São Paulo em 2º (IDHM 0,783).",
-    "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010."
-  );
-
-  // ---- Agro (PAM 2024 – IBGE) ----
-  addQ("agro1","Agro (PAM/IBGE)","Qual estado foi o maior produtor de soja (2024)?",
-    ["Mato Grosso","Paraná","Rio Grande do Sul","Goiás"],0,
-    "Em 2024, Mato Grosso segue como maior produtor nacional de soja (38,4 milhões t).",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro2","Agro (PAM/IBGE)","A produção de soja do MT em 2024 foi, aproximadamente:",
-    ["38,4 milhões de toneladas","18,4 milhões de toneladas","8,4 milhões de toneladas","68,4 milhões de toneladas"],0,
-    "O IBGE reporta 38,4 milhões de toneladas para o MT em 2024.",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro3","Agro (PAM/IBGE)","Segundo a PAM 2024, MT respondeu por cerca de quanto da produção nacional de milho?",
-    ["41,2%","12,4%","25,0%","60,0%"],0,
-    "O IBGE indica que MT ainda responde por 41,2% da produção nacional de milho em 2024.",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro4","Agro (PAM/IBGE)","Em 2024, qual município teve o maior volume de milho produzido no Brasil (segundo o IBGE)?",
-    ["Sorriso (MT)","Luís Eduardo Magalhães (BA)","Rio Verde (GO)","Cascavel (PR)"],0,
-    "A PAM 2024 cita Sorriso (MT) novamente como o maior volume de milho produzido (3,7 milhões t).",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro5","Agro (PAM/IBGE)","Estimativa (preço implícito): se MT gerou R$ 63,8 bi com 38,4 mi t de soja, o preço médio implícito fica mais perto de:",
-    ["R$ 1.660 por tonelada","R$ 660 por tonelada","R$ 3.600 por tonelada","R$ 9.800 por tonelada"],0,
-    "Cálculo: 63,8 bi / 38,4 mi ≈ 1.661 R$/t (aproximação).",
-    "Fonte: IBGE — PAM 2024 (valor e quantidade de soja do MT no texto da Agência IBGE Notícias)."
-  );
-
-  // ---- Pecuária (PPM 2024 – IBGE, PDF) ----
-  addQ("pec1","Pecuária (PPM/IBGE)","Qual estado teve o maior rebanho bovino em 2024 (PPM/IBGE)?",
-    ["Mato Grosso","Pará","Goiás","Minas Gerais"],0,
-    "O PDF da PPM 2024 mostra MT com ~32,9 milhões de cabeças (13,8% do total).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec2","Pecuária (PPM/IBGE)","O efetivo bovino do Brasil em 2024 foi aproximadamente:",
-    ["238,2 milhões","212,6 milhões","180,0 milhões","300,0 milhões"],0,
-    "A PPM 2024 registra 238,2 milhões de bovinos no Brasil (31/12/2024).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec3","Pecuária (PPM/IBGE)","Qual foi o preço médio nacional do leite em 2024 (PPM/IBGE)?",
-    ["R$ 2,45 por litro","R$ 1,45 por litro","R$ 3,45 por litro","R$ 4,10 por litro"],0,
-    "O PDF da PPM 2024 indica preço médio nacional do leite de R$ 2,45/L em 2024.",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec4","Pecuária (PPM/IBGE)","Qual estado liderou a produção de leite em 2024 (PPM/IBGE)?",
-    ["Minas Gerais","Paraná","Rio Grande do Sul","Santa Catarina"],0,
-    "A PPM 2024 mostra Minas Gerais com ~9,8 bilhões de litros (27,4%).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec5","Pecuária (PPM/IBGE)","Qual destes está entre os 3 maiores produtores de leite em 2024 (PPM/IBGE)?",
-    ["Paraná","Bahia","Amapá","Distrito Federal"],0,
-    "No resumo PPM 2024: MG (1º), PR (2º), RS (3º).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-
-  // ---- Arborização / Urbanismo (Censo 2022 – IBGE) ----
-  addQ("arb1","Arborização (Censo/IBGE)","Entre municípios com >100 mil hab., qual teve o MAIOR percentual de moradores em vias com arborização?",
-    ["Maringá (PR)","Curitiba (PR)","Florianópolis (SC)","Campinas (SP)"],0,
-    "O IBGE destacou Maringá (PR) como o maior (98,6%) entre municípios >100 mil hab.",
-    "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno)."
-  );
-  addQ("arb2","Arborização (Censo/IBGE)","Entre municípios com >100 mil hab., qual teve o MENOR percentual de moradores em vias com arborização?",
-    ["São José (SC)","Maringá (PR)","Campo Grande (MS)","Vitória (ES)"],0,
-    "O IBGE destacou São José (SC) como o menor (15,1%) entre municípios >100 mil hab.",
-    "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno)."
-  );
-  addQ("arb3","Arborização (Censo/IBGE)","Entre as capitais, qual se destacou com alta arborização (91,4%)?",
-    ["Campo Grande (MS)","Brasília (DF)","Manaus (AM)","Recife (PE)"],0,
-    "O IBGE destacou Campo Grande (MS) com 91,4% (capitais).",
-    "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno)."
-  );
-
-  // ---- Violência (lista pública do Anuário via Exame) ----
-  addQ("vio1","Violência (Anuário)","Segundo lista do Anuário (divulgada na imprensa), qual cidade apareceu como a MAIS violenta (taxa 92,9)?",
-    ["Santana (AP)","Camaçari (BA)","Jequié (BA)","Sorriso (MT)"],0,
-    "Na lista, Santana (AP) aparece em 1º com taxa 92,9 por 100 mil.",
-    "Fonte: Exame (lista das 10 cidades mais violentas, baseada no Anuário)."
-  );
-  addQ("vio2","Violência (Anuário)","Qual dessas cidades (da lista) fica em Mato Grosso?",
-    ["Sorriso","Jequié","Santana","Eunápolis"],0,
-    "A lista inclui Sorriso (MT) entre as 10 cidades com maiores taxas.",
-    "Fonte: Exame (lista das 10 cidades mais violentas, baseada no Anuário)."
-  );
-  addQ("vio3","Violência (Anuário)","Qual estado aparece com MAIS municípios na lista das 10 cidades mais violentas (segundo a matéria)?",
-    ["Bahia","São Paulo","Paraná","Santa Catarina"],0,
-    "A matéria destaca a Bahia com 6 municípios na lista.",
-    "Fonte: Exame (lista das 10 cidades mais violentas, baseada no Anuário)."
-  );
-
-  // ---- Geografia “clássica” (capitais, áreas, extremos) ----
-  addQ("geo1","Capitais","Qual é a capital do Amapá?",
-    ["Macapá","Belém","Boa Vista","Rio Branco"],0,
-    "A capital do Amapá é Macapá.",
-    "Fonte: Conhecimento geral (geografia política do Brasil)."
-  );
-  addQ("geo2","Capitais","Qual é a capital de Mato Grosso?",
-    ["Cuiabá","Campo Grande","Goiânia","Palmas"],0,
-    "A capital de Mato Grosso é Cuiabá.",
-    "Fonte: Conhecimento geral (geografia política do Brasil)."
-  );
-  addQ("geo3","Capitais","Qual é a capital de Roraima?",
-    ["Boa Vista","Macapá","Porto Velho","Manaus"],0,
-    "A capital de Roraima é Boa Vista.",
-    "Fonte: Conhecimento geral (geografia política do Brasil)."
-  );
-  addQ("geo4","Extremos","Qual é o MAIOR estado do Brasil em área (IBGE Cidades@ 2024)?",
-    ["Amazonas","Pará","Mato Grosso","Minas Gerais"],0,
-    "O IBGE registra o Amazonas como o maior em área (1.558.706,127 km² em 2024).",
-    "Fonte: IBGE — Cidades e Estados (AM, área territorial 2024)."
-  );
-  addQ("geo5","Extremos","Qual é o MENOR estado do Brasil em área (desconsiderando o DF)?",
-    ["Sergipe","Alagoas","Rio de Janeiro","Espírito Santo"],0,
-    "Sergipe é o menor estado brasileiro em área (IBGE Cidades@ mostra ~21.938 km² em 2024).",
-    "Fonte: IBGE — Cidades e Estados (SE, área territorial 2024)."
-  );
-  addQ("geo6","Cidades","Qual é o município menos populoso do Brasil (Censo 2022)?",
-    ["Serra da Saudade (MG)","Borá (SP)","Águas de São Pedro (SP)","Anhanguera (GO)"],0,
-    "O IBGE aponta Serra da Saudade (MG) como a menos populosa (833 hab. no Censo 2022).",
-    "Fonte: IBGE Educa (município menos populoso; Censo 2022)."
-  );
-
-  // ---- Mais perguntas de “ranking” e “comparação” (sem fugir do tema) ----
-  addQ("mix1","Brasil em números","Qual região tem a MAIOR população estimada (1º/07/2024)?",
-    ["Sudeste","Nordeste","Sul","Norte"],0,
-    "A estimativa 2024 soma ~88,6 milhões no Sudeste (maior entre regiões).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("mix2","Brasil em números","Qual região tem a MENOR população estimada (1º/07/2024)?",
-    ["Norte","Centro-Oeste","Sul","Nordeste"],0,
-    "A estimativa 2024 indica ~18,7 milhões no Norte (menor entre regiões).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("mix3","Agro & Pecuária","Qual combinação está correta (lideranças 2024)?",
-    ["Soja: MT · Rebanho bovino: MT · Leite: MG","Soja: PR · Rebanho: SP · Leite: RJ","Soja: RS · Rebanho: DF · Leite: AM","Soja: GO · Rebanho: AC · Leite: RR"],0,
-    "PAM 2024 (soja MT), PPM 2024 (rebanho MT), PPM 2024 (leite MG).",
-    "Fontes: IBGE — PAM 2024; IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("mix4","PIB por UF","Qual destes estados tem PIB > R$ 600 bi (2023)?",
-    ["Paraná","Pernambuco","Pará","Mato Grosso"],0,
-    "Paraná registra ~R$ 670,9 bi em 2023; os outros ficam abaixo disso.",
-    "Fonte: IBGE — tabela PIB por UF (PIB 2023)."
-  );
-  addQ("mix5","PIB por UF","Qual destes estados tem PIB por volta de R$ 430,9 bi (2023)?",
-    ["Bahia","Ceará","Distrito Federal","Goiás"],0,
-    "Bahia aparece com R$ 430.988 milhões (2023).",
-    "Fonte: IBGE — tabela PIB por UF (PIB 2023)."
-  );
-// ---- PIB (IBGE, PIB UF 2023) ----
-  addQ("pib1","PIB por UF","Qual unidade da federação tem o MAIOR PIB (2023)?",
-    ["São Paulo","Rio de Janeiro","Minas Gerais","Paraná"],0,
-    "Em 2023, São Paulo lidera o PIB entre as UFs (R$ 3.444.814 milhões).",
-    "Fonte: IBGE — “Produto Interno Bruto - PIB”, tabela por UF (PIB 2023)."
-  );
-  addQ("pib2","PIB por UF","Qual unidade da federação tem o MENOR PIB (2023)?",
-    ["Roraima","Acre","Amapá","Tocantins"],0,
-    "Na tabela do IBGE para 2023, Roraima aparece com o menor PIB (R$ 25.125 milhões).",
-    "Fonte: IBGE — “Produto Interno Bruto - PIB”, tabela por UF (PIB 2023)."
-  );
-  addQ("pib3","PIB por UF","Qual UF tem PIB ~R$ 1,17 trilhão (2023)?",
-    ["Rio de Janeiro","Bahia","Distrito Federal","Santa Catarina"],0,
-    "O IBGE registra o PIB do RJ em 2023 como R$ 1.172.871 milhões (≈R$ 1,17 tri).",
-    "Fonte: IBGE — tabela por UF (PIB 2023)."
-  );
-  addQ("pib4","PIB por UF","Qual UF tem PIB ~R$ 971,9 bilhões (2023)?",
-    ["Minas Gerais","Rio Grande do Sul","Goiás","Pará"],0,
-    "Minas Gerais aparece com R$ 971.978 milhões na tabela do IBGE (2023).",
-    "Fonte: IBGE — tabela por UF (PIB 2023)."
-  );
-  addQ("pib5","PIB por UF","Qual dessas UFs tem PIB acima de R$ 500 bilhões (2023)?",
-    ["Santa Catarina","Mato Grosso do Sul","Pernambuco","Pará"],0,
-    "Em 2023, Santa Catarina registra R$ 513.393 milhões (acima de R$ 500 bi).",
-    "Fonte: IBGE — tabela por UF (PIB 2023)."
-  );
-
-  // ---- População (Estimativas IBGE 1º jul 2024) ----
-  addQ("pop1","População","Qual estado tem a MAIOR população estimada em 1º/07/2024?",
-    ["São Paulo","Minas Gerais","Rio de Janeiro","Bahia"],0,
-    "SP lidera com 45.973.194 habitantes (estimativa IBGE 2024).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop2","População","Qual estado tem a MENOR população estimada em 1º/07/2024?",
-    ["Roraima","Acre","Amapá","Tocantins"],0,
-    "Roraima aparece com 716.793 habitantes (estimativa IBGE 2024).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop3","População","Qual a população estimada do Brasil em 1º/07/2024 (IBGE)?",
-    ["212.583.750","203.100.000","220.400.000","197.800.000"],0,
-    "O IBGE divulgou 212.583.750 habitantes para o Brasil na data de referência 1º/07/2024.",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop4","População","Qual estado tem ~3,84 milhões de habitantes (estimativa 1º/07/2024)?",
-    ["Mato Grosso","Distrito Federal","Amazonas","Espírito Santo"],0,
-    "Mato Grosso aparece com 3.836.399 habitantes na estimativa de 2024.",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("pop5","População","Qual estado tem ~2,98 milhões de habitantes (estimativa 1º/07/2024)?",
-    ["Distrito Federal","Mato Grosso do Sul","Sergipe","Rio Grande do Norte"],0,
-    "Distrito Federal aparece com 2.982.818 habitantes na estimativa de 2024.",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-
-  // ---- IDHM (PNUD/Atlas Brasil – UFs 2010) ----
-  addQ("idhm1","IDH (IDHM)","Qual UF tem o MAIOR IDHM (2010)?",
-    ["Distrito Federal","São Paulo","Santa Catarina","Rio de Janeiro"],0,
-    "No ranking de 2010, o Distrito Federal é 1º com IDHM 0,824.",
-    "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010."
-  );
-  addQ("idhm2","IDH (IDHM)","Qual UF tem o MENOR IDHM (2010)?",
-    ["Maranhão","Alagoas","Piauí","Pará"],0,
-    "No ranking de 2010, o Maranhão aparece na última posição (IDHM 0,639).",
-    "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010."
-  );
-  addQ("idhm3","IDH (IDHM)","No IDHM 2010, quem está em 2º lugar?",
-    ["São Paulo","Santa Catarina","Goiás","Minas Gerais"],0,
-    "O ranking de UFs 2010 coloca São Paulo em 2º (IDHM 0,783).",
-    "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010."
-  );
-
-  // ---- Agro (PAM 2024 – IBGE) ----
-  addQ("agro1","Agro (PAM/IBGE)","Qual estado foi o maior produtor de soja (2024)?",
-    ["Mato Grosso","Paraná","Rio Grande do Sul","Goiás"],0,
-    "Em 2024, Mato Grosso segue como maior produtor nacional de soja (38,4 milhões t).",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro2","Agro (PAM/IBGE)","A produção de soja do MT em 2024 foi, aproximadamente:",
-    ["38,4 milhões de toneladas","18,4 milhões de toneladas","8,4 milhões de toneladas","68,4 milhões de toneladas"],0,
-    "O IBGE reporta 38,4 milhões de toneladas para o MT em 2024.",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro3","Agro (PAM/IBGE)","Segundo a PAM 2024, MT respondeu por cerca de quanto da produção nacional de milho?",
-    ["41,2%","12,4%","25,0%","60,0%"],0,
-    "O IBGE indica que MT ainda responde por 41,2% da produção nacional de milho em 2024.",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro4","Agro (PAM/IBGE)","Em 2024, qual município teve o maior volume de milho produzido no Brasil (segundo o IBGE)?",
-    ["Sorriso (MT)","Luís Eduardo Magalhães (BA)","Rio Verde (GO)","Cascavel (PR)"],0,
-    "A PAM 2024 cita Sorriso (MT) novamente como o maior volume de milho produzido (3,7 milhões t).",
-    "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-  );
-  addQ("agro5","Agro (PAM/IBGE)","Estimativa (preço implícito): se MT gerou R$ 63,8 bi com 38,4 mi t de soja, o preço médio implícito fica mais perto de:",
-    ["R$ 1.660 por tonelada","R$ 660 por tonelada","R$ 3.600 por tonelada","R$ 9.800 por tonelada"],0,
-    "Cálculo: 63,8 bi / 38,4 mi ≈ 1.661 R$/t (aproximação).",
-    "Fonte: IBGE — PAM 2024 (valor e quantidade de soja do MT no texto da Agência IBGE Notícias)."
-  );
-
-  // ---- Pecuária (PPM 2024 – IBGE, PDF) ----
-  addQ("pec1","Pecuária (PPM/IBGE)","Qual estado teve o maior rebanho bovino em 2024 (PPM/IBGE)?",
-    ["Mato Grosso","Pará","Goiás","Minas Gerais"],0,
-    "O PDF da PPM 2024 mostra MT com ~32,9 milhões de cabeças (13,8% do total).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec2","Pecuária (PPM/IBGE)","O efetivo bovino do Brasil em 2024 foi aproximadamente:",
-    ["238,2 milhões","212,6 milhões","180,0 milhões","300,0 milhões"],0,
-    "A PPM 2024 registra 238,2 milhões de bovinos no Brasil (31/12/2024).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec3","Pecuária (PPM/IBGE)","Qual foi o preço médio nacional do leite em 2024 (PPM/IBGE)?",
-    ["R$ 2,45 por litro","R$ 1,45 por litro","R$ 3,45 por litro","R$ 4,10 por litro"],0,
-    "O PDF da PPM 2024 indica preço médio nacional do leite de R$ 2,45/L em 2024.",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec4","Pecuária (PPM/IBGE)","Qual estado liderou a produção de leite em 2024 (PPM/IBGE)?",
-    ["Minas Gerais","Paraná","Rio Grande do Sul","Santa Catarina"],0,
-    "A PPM 2024 mostra Minas Gerais com ~9,8 bilhões de litros (27,4%).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("pec5","Pecuária (PPM/IBGE)","Qual destes está entre os 3 maiores produtores de leite em 2024 (PPM/IBGE)?",
-    ["Paraná","Bahia","Amapá","Distrito Federal"],0,
-    "No resumo PPM 2024: MG (1º), PR (2º), RS (3º).",
-    "Fonte: IBGE — PPM 2024 (PDF resumo)."
-  );
-
-  // ---- Arborização / Urbanismo (Censo 2022 – IBGE) ----
-  addQ("arb1","Arborização (Censo/IBGE)","Entre municípios com >100 mil hab., qual teve o MAIOR percentual de moradores em vias com arborização?",
-    ["Maringá (PR)","Curitiba (PR)","Florianópolis (SC)","Campinas (SP)"],0,
-    "O IBGE destacou Maringá (PR) como o maior (98,6%) entre municípios >100 mil hab.",
-    "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno)."
-  );
-  addQ("arb2","Arborização (Censo/IBGE)","Entre municípios com >100 mil hab., qual teve o MENOR percentual de moradores em vias com arborização?",
-    ["São José (SC)","Maringá (PR)","Campo Grande (MS)","Vitória (ES)"],0,
-    "O IBGE destacou São José (SC) como o menor (15,1%) entre municípios >100 mil hab.",
-    "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno)."
-  );
-  addQ("arb3","Arborização (Censo/IBGE)","Entre as capitais, qual se destacou com alta arborização (91,4%)?",
-    ["Campo Grande (MS)","Brasília (DF)","Manaus (AM)","Recife (PE)"],0,
-    "O IBGE destacou Campo Grande (MS) com 91,4% (capitais).",
-    "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno)."
-  );
-
-  // ---- Violência (lista pública do Anuário via Exame) ----
-  addQ("vio1","Violência (Anuário)","Segundo lista do Anuário (divulgada na imprensa), qual cidade apareceu como a MAIS violenta (taxa 92,9)?",
-    ["Santana (AP)","Camaçari (BA)","Jequié (BA)","Sorriso (MT)"],0,
-    "Na lista, Santana (AP) aparece em 1º com taxa 92,9 por 100 mil.",
-    "Fonte: Exame (lista das 10 cidades mais violentas, baseada no Anuário)."
-  );
-  addQ("vio2","Violência (Anuário)","Qual dessas cidades (da lista) fica em Mato Grosso?",
-    ["Sorriso","Jequié","Santana","Eunápolis"],0,
-    "A lista inclui Sorriso (MT) entre as 10 cidades com maiores taxas.",
-    "Fonte: Exame (lista das 10 cidades mais violentas, baseada no Anuário)."
-  );
-  addQ("vio3","Violência (Anuário)","Qual estado aparece com MAIS municípios na lista das 10 cidades mais violentas (segundo a matéria)?",
-    ["Bahia","São Paulo","Paraná","Santa Catarina"],0,
-    "A matéria destaca a Bahia com 6 municípios na lista.",
-    "Fonte: Exame (lista das 10 cidades mais violentas, baseada no Anuário)."
-  );
-
-  // ---- Geografia “clássica” (capitais, áreas, extremos) ----
-  addQ("geo1","Capitais","Qual é a capital do Amapá?",
-    ["Macapá","Belém","Boa Vista","Rio Branco"],0,
-    "A capital do Amapá é Macapá.",
-    "Fonte: Conhecimento geral (geografia política do Brasil)."
-  );
-  addQ("geo2","Capitais","Qual é a capital de Mato Grosso?",
-    ["Cuiabá","Campo Grande","Goiânia","Palmas"],0,
-    "A capital de Mato Grosso é Cuiabá.",
-    "Fonte: Conhecimento geral (geografia política do Brasil)."
-  );
-  addQ("geo3","Capitais","Qual é a capital de Roraima?",
-    ["Boa Vista","Macapá","Porto Velho","Manaus"],0,
-    "A capital de Roraima é Boa Vista.",
-    "Fonte: Conhecimento geral (geografia política do Brasil)."
-  );
-  addQ("geo4","Extremos","Qual é o MAIOR estado do Brasil em área (IBGE Cidades@ 2024)?",
-    ["Amazonas","Pará","Mato Grosso","Minas Gerais"],0,
-    "O IBGE registra o Amazonas como o maior em área (1.558.706,127 km² em 2024).",
-    "Fonte: IBGE — Cidades e Estados (AM, área territorial 2024)."
-  );
-  addQ("geo5","Extremos","Qual é o MENOR estado do Brasil em área (desconsiderando o DF)?",
-    ["Sergipe","Alagoas","Rio de Janeiro","Espírito Santo"],0,
-    "Sergipe é o menor estado brasileiro em área (IBGE Cidades@ mostra ~21.938 km² em 2024).",
-    "Fonte: IBGE — Cidades e Estados (SE, área territorial 2024)."
-  );
-  addQ("geo6","Cidades","Qual é o município menos populoso do Brasil (Censo 2022)?",
-    ["Serra da Saudade (MG)","Borá (SP)","Águas de São Pedro (SP)","Anhanguera (GO)"],0,
-    "O IBGE aponta Serra da Saudade (MG) como a menos populosa (833 hab. no Censo 2022).",
-    "Fonte: IBGE Educa (município menos populoso; Censo 2022)."
-  );
-
-  // ---- Mais perguntas de “ranking” e “comparação” (sem fugir do tema) ----
-  addQ("mix1","Brasil em números","Qual região tem a MAIOR população estimada (1º/07/2024)?",
-    ["Sudeste","Nordeste","Sul","Norte"],0,
-    "A estimativa 2024 soma ~88,6 milhões no Sudeste (maior entre regiões).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("mix2","Brasil em números","Qual região tem a MENOR população estimada (1º/07/2024)?",
-    ["Norte","Centro-Oeste","Sul","Nordeste"],0,
-    "A estimativa 2024 indica ~18,7 milhões no Norte (menor entre regiões).",
-    "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024)."
-  );
-  addQ("mix3","Agro & Pecuária","Qual combinação está correta (lideranças 2024)?",
-    ["Soja: MT · Rebanho bovino: MT · Leite: MG","Soja: PR · Rebanho: SP · Leite: RJ","Soja: RS · Rebanho: DF · Leite: AM","Soja: GO · Rebanho: AC · Leite: RR"],0,
-    "PAM 2024 (soja MT), PPM 2024 (rebanho MT), PPM 2024 (leite MG).",
-    "Fontes: IBGE — PAM 2024; IBGE — PPM 2024 (PDF resumo)."
-  );
-  addQ("mix4","PIB por UF","Qual destes estados tem PIB > R$ 600 bi (2023)?",
-    ["Paraná","Pernambuco","Pará","Mato Grosso"],0,
-    "Paraná registra ~R$ 670,9 bi em 2023; os outros ficam abaixo disso.",
-    "Fonte: IBGE — tabela PIB por UF (PIB 2023)."
-  );
-  addQ("mix5","PIB por UF","Qual destes estados tem PIB por volta de R$ 430,9 bi (2023)?",
-    ["Bahia","Ceará","Distrito Federal","Goiás"],0,
-    "Bahia aparece com R$ 430.988 milhões (2023).",
-    "Fonte: IBGE — tabela PIB por UF (PIB 2023)."
-  );
-// ===== PACOTÃO EXTRA (cole abaixo de const bank = [];) =====
-
-// População (IBGE 2024 – PDF oficial)
-addQ("popBR2024","População","Qual é a população estimada do Brasil em 1º/07/2024 (IBGE)?",
-  ["212.583.750","203.583.750","222.583.750","212.058.375"],0,
-  "O IBGE publicou a estimativa oficial do Brasil em 1º/07/2024 como 212.583.750 habitantes.",
-  "Fonte: IBGE — Estimativas da População 2024 (PDF oficial)."
-);
-
-addQ("popSP2024","População","Qual estado tem a maior população estimada em 1º/07/2024?",
-  ["São Paulo","Minas Gerais","Rio de Janeiro","Bahia"],0,
-  "São Paulo lidera as estimativas populacionais por UF em 2024.",
-  "Fonte: IBGE — Estimativas da População 2024 (PDF oficial)."
-);
-
-addQ("popRR2024","População","Qual estado tem a menor população estimada em 1º/07/2024?",
-  ["Roraima","Amapá","Acre","Tocantins"],0,
-  "Roraima aparece com o menor total nas estimativas de 2024.",
-  "Fonte: IBGE — Estimativas da População 2024 (PDF oficial)."
-);
-
-addQ("popNE2024","População","Qual região tinha cerca de 57,1 milhões de habitantes (estimativa 2024)?",
-  ["Nordeste","Norte","Sul","Centro-Oeste"],0,
-  "O Nordeste soma 57.112.096 habitantes na estimativa de 2024.",
-  "Fonte: IBGE — Estimativas da População 2024 (PDF oficial)."
-);
-
-addQ("popSE2024","População","Qual região tinha cerca de 88,6 milhões de habitantes (estimativa 2024)?",
-  ["Sudeste","Nordeste","Sul","Norte"],0,
-  "O Sudeste soma 88.617.693 habitantes na estimativa de 2024.",
-  "Fonte: IBGE — Estimativas da População 2024 (PDF oficial)."
-);
-
-// Município mais populoso (IBGE release 2024)
-addQ("munPop2024","Cidades","Qual é o município mais populoso do Brasil (estimativa 2024)?",
-  ["São Paulo (SP)","Rio de Janeiro (RJ)","Brasília (DF)","Salvador (BA)"],0,
-  "O release do IBGE destaca São Paulo como o município mais populoso (estimativa 2024).",
-  "Fonte: IBGE — release das Estimativas 2024 (Agência IBGE Notícias)."
-);
-
-// Município menos populoso (Censo 2022 / Cidades@)
-addQ("munMenor2022","Cidades","Qual é o município menos populoso do Brasil (Censo 2022)?",
-  ["Serra da Saudade (MG)","Borá (SP)","Anhanguera (GO)","Águas de São Pedro (SP)"],0,
-  "O Cidades@ do IBGE mostra Serra da Saudade (MG) com 833 pessoas no Censo 2022.",
-  "Fonte: IBGE — Cidades@ (Serra da Saudade, população no último censo)."
-);
-
-// Área territorial (IBGE Cidades@)
-addQ("areaMaiorUF","Extremos","Qual é o maior estado do Brasil em área (IBGE, 2024)?",
-  ["Amazonas","Pará","Mato Grosso","Minas Gerais"],0,
-  "O Cidades@ do IBGE indica o Amazonas como maior UF em área territorial.",
-  "Fonte: IBGE — Cidades@ (Amazonas, área territorial 2024)."
-);
-
-addQ("areaMenorUF","Extremos","Qual é o menor estado do Brasil em área (IBGE; desconsiderando o DF)?",
-  ["Sergipe","Alagoas","Rio de Janeiro","Espírito Santo"],0,
-  "O Cidades@ do IBGE indica Sergipe como a menor UF em área territorial.",
-  "Fonte: IBGE — Cidades@ (Sergipe, área territorial)."
-);
-
-// Arborização urbana (Censo 2022 — release IBGE)
-addQ("arbMaior100k","Arborização","Entre municípios com mais de 100 mil habitantes, qual teve o MAIOR percentual de moradores em vias arborizadas?",
-  ["Maringá (PR)","Curitiba (PR)","Florianópolis (SC)","Campinas (SP)"],0,
-  "O IBGE destacou Maringá (PR) com 98,6% como maior entre municípios >100 mil hab.",
-  "Fonte: IBGE — release do Censo 2022 (características urbanísticas do entorno)."
-);
-
-addQ("arbMenor100k","Arborização","Entre municípios com mais de 100 mil habitantes, qual teve o MENOR percentual de moradores em vias arborizadas?",
-  ["São José (SC)","Joinville (SC)","Cuiabá (MT)","Maringá (PR)"],0,
-  "O IBGE destacou São José (SC) com 15,1% como menor entre municípios >100 mil hab.",
-  "Fonte: IBGE — release do Censo 2022 (características urbanísticas do entorno)."
-);
-
-addQ("arbCapitalTop","Arborização","Entre as capitais, qual se destacou com maior arborização (91,4%)?",
-  ["Campo Grande (MS)","Goiânia (GO)","Curitiba (PR)","Palmas (TO)"],0,
-  "O IBGE destacou Campo Grande (MS) como a capital com maior percentual (91,4%).",
-  "Fonte: IBGE — release do Censo 2022 (características urbanísticas do entorno)."
-);
-
-addQ("arbEstadoMenor","Arborização","Segundo repercussão do Censo 2022, qual estado teve o menor número de vias arborizadas (38,5%)?",
-  ["Sergipe","Amapá","Roraima","Mato Grosso"],0,
-  "Uma síntese dos números do IBGE aponta Sergipe como menor percentual de vias arborizadas.",
-  "Fonte: reportagem com números do IBGE Censo 2022 (arborização)."
-);
-
-// Agro (PAM 2024 — IBGE)
-addQ("sojaMaiorUF2024","Agro (PAM)","Qual estado foi o maior produtor nacional de soja em 2024 (IBGE/PAM)?",
-  ["Mato Grosso","Paraná","Rio Grande do Sul","Goiás"],0,
-  "O release da PAM 2024 diz que MT segue como maior produtor de soja (38,4 milhões t).",
-  "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-);
-
-addQ("sojaMTton2024","Agro (PAM)","A produção de soja do Mato Grosso em 2024 foi:",
-  ["38,4 milhões de toneladas","28,4 milhões de toneladas","48,4 milhões de toneladas","18,4 milhões de toneladas"],0,
-  "O IBGE registra 38,4 milhões t de soja em MT em 2024.",
-  "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-);
-
-addQ("sojaMTvalor2024","Agro (PAM)","Segundo a PAM 2024, o valor gerado pela soja do MT foi aproximadamente:",
-  ["R$ 63,8 bilhões","R$ 83,6 bilhões","R$ 6,38 bilhões","R$ 163,8 bilhões"],0,
-  "O release indica que 38,4 milhões t geraram R$ 63,8 bilhões (com queda no valor).",
-  "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias)."
-);
-
-// Pecuária (PPM 2024 — IBGE PDF)
-addQ("bovBR2024","Pecuária (PPM)","Qual foi o efetivo bovino do Brasil em 31/12/2024 (PPM/IBGE)?",
-  ["238,2 milhões","212,6 milhões","180,0 milhões","300,0 milhões"],0,
-  "O PDF da PPM 2024 registra 238,2 milhões de bovinos no Brasil.",
-  "Fonte: IBGE — PPM 2024 (PDF resumo)."
-);
-
-addQ("bovMT2024","Pecuária (PPM)","Qual estado teve o maior rebanho bovino em 2024 (PPM/IBGE)?",
-  ["Mato Grosso","Pará","Goiás","Minas Gerais"],0,
-  "No PDF da PPM 2024, MT lidera com 32,9 milhões de cabeças (13,8%).",
-  "Fonte: IBGE — PPM 2024 (PDF resumo)."
-);
-
-addQ("bov2UF2024","Pecuária (PPM)","Qual estado aparece em 2º no rebanho bovino em 2024 (PPM/IBGE)?",
-  ["Pará","Goiás","Mato Grosso do Sul","Minas Gerais"],0,
-  "No PDF da PPM 2024, Pará aparece em 2º com 25,6 milhões (10,7%).",
-  "Fonte: IBGE — PPM 2024 (PDF resumo)."
-);
-
-addQ("leiteBR2024","Pecuária (PPM)","Qual foi a produção de leite do Brasil em 2024 (PPM/IBGE)?",
-  ["35,7 bilhões de litros","25,7 bilhões de litros","45,7 bilhões de litros","15,7 bilhões de litros"],0,
-  "O PDF da PPM 2024 registra 35,7 bilhões de litros (variação +1,4%).",
-  "Fonte: IBGE — PPM 2024 (PDF resumo)."
-);
-
-addQ("leiteMG2024","Pecuária (PPM)","Qual estado liderou a produção de leite em 2024 (PPM/IBGE)?",
-  ["Minas Gerais","Paraná","Rio Grande do Sul","Santa Catarina"],0,
-  "O PDF da PPM 2024 mostra MG em 1º com 9,8 bilhões de litros (27,4%).",
-  "Fonte: IBGE — PPM 2024 (PDF resumo)."
-);
-
-addQ("precoLeite2024","Pecuária (PPM)","Qual foi o preço médio nacional do leite em 2024 (PPM/IBGE)?",
-  ["R$ 2,45 por litro","R$ 1,45 por litro","R$ 3,45 por litro","R$ 4,25 por litro"],0,
-  "O resumo da PPM 2024 traz o preço médio do leite (Brasil) como R$ 2,45/L.",
-  "Fonte: IBGE — PPM 2024 (PDF resumo)."
-);
-
-// Violência (lista pública na Exame baseada no Anuário, ano 2023)
-addQ("vioTop1","Violência","Segundo lista divulgada (Anuário/FBSP), qual cidade apareceu como a mais violenta de 2023 (taxa 92,9)?",
-  ["Santana (AP)","Camaçari (BA)","Jequié (BA)","Sorriso (MT)"],0,
-  "A matéria destaca Santana (AP) como 1º lugar na lista (92,9 por 100 mil).",
- 
-
+  // Atualiza banco (se aqui ficar 0, é porque nem chegou aqui)
   ui.kBank.textContent = String(bank.length);
 
-  // ===== Runtime do quiz =====
+  // ===== Quiz runtime =====
   let deck = [];
   let idx = -1;
   let answered = false;
   let score = 0;
   let streak = 0;
 
-  // timer
-  let timeLimit = 0;
-  let timeLeft = 0;
-  let timerInt = null;
-
   function updateLabels(){
     ui.nLabel.textContent = ui.selN.value;
     const t = Number(ui.selT.value);
     ui.tLabel.textContent = (t === 0) ? "Sem limite" : `${Math.round(t/60)} min`;
-    ui.hint.textContent = ui.chkTrain.checked
-      ? "Modo treino: feedback imediato."
-      : "Modo prova: feedback só após responder.";
+    ui.hint.textContent = ui.chkTrain.checked ? "Modo treino: feedback imediato." : "Modo prova: feedback após responder.";
   }
   ui.selN.addEventListener("change", updateLabels);
   ui.selT.addEventListener("change", updateLabels);
   ui.chkTrain.addEventListener("change", updateLabels);
   updateLabels();
-
-  function stopTimer(){
-    if(timerInt){ clearInterval(timerInt); timerInt = null; }
-  }
-  function fmtTime(s){
-    const m = Math.floor(s/60);
-    const r = s%60;
-    return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");
-  }
-  function startTimer(){
-    stopTimer();
-    if(timeLimit <= 0){
-      ui.qTimer.textContent = "⏳ Sem limite";
-      return;
-    }
-    ui.qTimer.textContent = "⏳ " + fmtTime(timeLeft);
-    timerInt = setInterval(() => {
-      timeLeft = Math.max(0, timeLeft - 1);
-      ui.qTimer.textContent = "⏳ " + fmtTime(timeLeft);
-      if(timeLeft <= 0){
-        stopTimer();
-        finishQuiz(true);
-      }
-    }, 1000);
-  }
 
   function render(){
     const total = deck.length;
@@ -1257,20 +638,14 @@ addQ("vioTop1","Violência","Segundo lista divulgada (Anuário/FBSP), qual cidad
   }
 
   function choose(i){
-    if(idx < 0 || idx >= deck.length){
-      toast("Clique em Começar 🙂");
-      return;
-    }
-    if(answered){
-      toast("Já respondeu. Enter → próxima.");
-      return;
-    }
+    if(idx < 0 || idx >= deck.length){ toast("Clique em Começar 🙂"); return; }
+    if(answered){ toast("Já respondeu. Enter → próxima."); return; }
+
     const q = deck[idx];
     answered = true;
 
     const isCorrect = (i === q.correct);
-    if(isCorrect){ score++; streak++; }
-    else{ streak = 0; }
+    if(isCorrect){ score++; streak++; } else { streak = 0; }
 
     const items = Array.from(ui.ansWrap.querySelectorAll(".ans"));
     items.forEach((el, k) => {
@@ -1280,64 +655,27 @@ addQ("vioTop1","Violência","Segundo lista divulgada (Anuário/FBSP), qual cidad
 
     ui.btnNext.disabled = false;
     ui.btnExplain.disabled = false;
-
-    if(ui.chkTrain.checked){
-      showFeedback(isCorrect);
-    }else{
-      showFeedback(isCorrect); // você pode esconder no modo prova se quiser
-    }
-  }
-
-  function explain(){
-    if(idx < 0 || idx >= deck.length){ toast("Ainda não começou 🙂"); return; }
-    if(!answered){ toast("Responda primeiro 🙂"); return; }
-    ui.fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+    showFeedback(isCorrect);
   }
 
   function next(){
     if(idx < 0 || idx >= deck.length){ toast("Clique em Começar 🙂"); return; }
     if(!answered){ toast("Responda antes de avançar 🙂"); return; }
-    if(idx === deck.length - 1){ finishQuiz(false); return; }
+    if(idx === deck.length - 1){
+      const p = ensureProfile(activeName);
+      p.lastScore = score; p.lastTotal = deck.length;
+      if(score > p.best) p.best = score;
+      if(streak > p.streakBest) p.streakBest = streak;
+      saveProfiles(profiles);
+      refreshPlayerUI();
+      ui.qText.innerHTML = `🎉 Fim! Você fez <b>${score}/${deck.length}</b>.`;
+      ui.ansWrap.style.pointerEvents = "none";
+      ui.btnNext.disabled = true;
+      ui.btnExplain.disabled = true;
+      return;
+    }
     idx++;
     render();
-  }
-
-  function finishQuiz(byTime){
-    stopTimer();
-    const total = deck.length;
-    const pct = total ? Math.round(score/total*100) : 0;
-
-    const p = ensureProfile(activeName);
-    p.lastScore = score;
-    p.lastTotal = total;
-    if(score > p.best) p.best = score;
-    if(streak > p.streakBest) p.streakBest = streak;
-
-    saveProfiles(profiles);
-    refreshPlayerUI();
-
-    ui.qText.innerHTML = byTime
-      ? `⏰ Tempo! Você fez <b>${score}/${total}</b> (${pct}%).`
-      : `🎉 Fim! Você fez <b>${score}/${total}</b> (${pct}%).`;
-
-    ui.qCat.textContent = "Categoria: Resultado";
-    ui.qProg.textContent = total + "/" + total;
-    ui.barFill.style.width = "100%";
-
-    ui.ansWrap.style.opacity = ".85";
-    ui.ansWrap.style.pointerEvents = "none";
-    ui.btnNext.disabled = true;
-    ui.btnExplain.disabled = true;
-
-    ui.fb.innerHTML = `
-      <span class="tag">📌 Resumo</span>
-      <b>Jogador:</b> ${escapeHtml(activeName)}<br>
-      <b>Pontuação:</b> ${score}/${total} (${pct}%)<br>
-      <b>Recorde:</b> ${p.best}<br>
-      <b>Melhor sequência (recorde):</b> ${p.streakBest}<br>
-      <span style="opacity:.95; font-size:12px">Dica: mude quantidade/tempo e clique em “Começar / Reiniciar”.</span>
-    `;
-    ui.fb.classList.add("show");
   }
 
   function buildDeck(){
@@ -1368,34 +706,28 @@ addQ("vioTop1","Violência","Segundo lista divulgada (Anuário/FBSP), qual cidad
     score = 0;
     streak = 0;
 
-    timeLimit = parseInt(ui.selT.value,10) || 0;
-    timeLeft = timeLimit;
-    startTimer();
-
-    render();
     toast("Valendo! 😄");
+    render();
   }
 
   function resetRound(){
-    stopTimer();
     deck = [];
     idx = -1;
     answered = false;
     score = 0;
     streak = 0;
-    ui.fb.classList.remove("show");
-    ui.fb.innerHTML = "";
     render();
     toast("Rodada resetada 🙂");
   }
 
-  // Botões (uma vez só)
   ui.btnStart.addEventListener("click", buildDeck);
   ui.btnReset.addEventListener("click", resetRound);
-  ui.btnExplain.addEventListener("click", explain);
   ui.btnNext.addEventListener("click", next);
+  ui.btnExplain.addEventListener("click", () => {
+    if(!answered) toast("Responda primeiro 🙂");
+    else ui.fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
 
-  // Teclado
   window.addEventListener("keydown", (ev) => {
     if(ev.key === "1") choose(0);
     if(ev.key === "2") choose(1);
@@ -1409,6 +741,9 @@ addQ("vioTop1","Violência","Segundo lista divulgada (Anuário/FBSP), qual cidad
   ui.playerName.value = (activeName === "Visitante") ? "" : activeName;
   refreshPlayerUI();
   render();
+
+  // prova que o JS rodou:
+  console.log("GeoAgro Quiz OK. Bank =", bank.length);
 })();
 </script>
 </body>
