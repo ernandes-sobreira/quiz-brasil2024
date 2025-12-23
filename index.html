@@ -517,13 +517,14 @@
   saveProfiles(profiles);
 
   function refreshPlayerUI(){
-    const p = ensureProfile(activeName);
-    ui.kPlayer.textContent = activeName;
-    ui.nameLabel.textContent = activeName;
-    ui.kBest.textContent = String(p.best);
-    ui.kStreakBest.textContent = String(p.streakBest);
-    ui.deltaLabel.textContent = (p.lastTotal > 0) ? `Última: ${p.lastScore}/${p.lastTotal}` : "—";
-  }
+  const p = ensureProfile(activeName);
+  ui.kPlayer.textContent = activeName;       // card “Jogador”
+  ui.nameLabel.textContent = activeName;     // chip “Nome: …”
+  ui.kBest.textContent = String(p.best);
+  ui.kStreakBest.textContent = String(p.streakBest);
+  ui.deltaLabel.textContent = (p.lastTotal > 0) ? `Última: ${p.lastScore}/${p.lastTotal}` : "—";
+}
+
 
   function setPlayer(raw){
     const name = (raw || "").trim();
@@ -540,6 +541,18 @@
   ui.playerName.addEventListener("keydown", (e) => {
     if(e.key === "Enter"){ e.preventDefault(); setPlayer(ui.playerName.value); }
   });
+  // --- Nome (salvar / enter) ---
+ui.btnSaveName.addEventListener("click", () => {
+  setPlayer(ui.playerName.value);
+});
+
+ui.playerName.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    setPlayer(ui.playerName.value);
+  }
+});
+
 
   // ===== BANCO (2 perguntas de teste) =====
   const bank = [];
@@ -720,7 +733,11 @@
     toast("Rodada resetada 🙂");
   }
 
-  ui.btnStart.addEventListener("click", buildDeck);
+ ui.btnStart.addEventListener("click", () => {
+  // se o campo tiver algo, vira o jogador ativo
+  if ((ui.playerName.value || "").trim()) setPlayer(ui.playerName.value);
+  buildDeck();
+});
   ui.btnReset.addEventListener("click", resetRound);
   ui.btnNext.addEventListener("click", next);
   ui.btnExplain.addEventListener("click", () => {
