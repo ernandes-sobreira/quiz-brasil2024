@@ -1,1488 +1,180 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>GeoAgro Quiz BR — Edição 2024</title>
-
-  <style>
-    :root{
-      --bg0:#070A14;
-      --bg1:#0B1020;
-
-      --card: rgba(255,255,255,.08);
-      --card2: rgba(255,255,255,.06);
-      --stroke: rgba(255,255,255,.14);
-
-      --text:#EEF2FF;
-      --muted: rgba(238,242,255,.72);
-
-      --good: #34d399;
-      --bad:  #fb7185;
-
-      /* Paleta jovial rosa -> azul */
-      --p1:#fb7185; /* rose */
-      --p2:#f472b6; /* pink */
-      --p3:#a78bfa; /* lilac */
-      --p4:#60a5fa; /* blue */
-      --p5:#22d3ee; /* cyan */
-
-      --shadow: 0 16px 40px rgba(0,0,0,.42);
-      --radius: 18px;
-      --radius2: 14px;
-
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--font);
-      color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 10% 10%, rgba(244,114,182,.25), transparent 55%),
-        radial-gradient(1000px 600px at 90% 15%, rgba(96,165,250,.22), transparent 55%),
-        radial-gradient(900px 600px at 30% 95%, rgba(34,211,238,.18), transparent 55%),
-        radial-gradient(800px 520px at 85% 90%, rgba(251,113,133,.16), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg0) 68%, #050812);
-      overflow-x:hidden;
-    }
-
-    .wrap{
-      max-width: 1020px;
-      margin: 0 auto;
-      padding: 18px 14px 28px;
-    }
-
-    .hero{
-      border:1px solid var(--stroke);
-      background: linear-gradient(135deg,
-        rgba(251,113,133,.14),
-        rgba(244,114,182,.12),
-        rgba(167,139,250,.12),
-        rgba(96,165,250,.12));
-      border-radius: var(--radius);
-      padding: 16px 16px 14px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-    .hero:before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(640px 240px at 18% 10%, rgba(251,113,133,.28), transparent 58%),
-        radial-gradient(640px 260px at 60% 0%, rgba(167,139,250,.22), transparent 60%),
-        radial-gradient(540px 220px at 90% 10%, rgba(96,165,250,.22), transparent 60%);
-      pointer-events:none;
-      opacity:.95;
-    }
-    .hero > *{position:relative}
-
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    .between{justify-content:space-between}
-
-    h1{
-      margin:0;
-      font-size: 22px;
-      letter-spacing:.2px;
-      line-height:1.1;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      font-size:12px;
-      color: var(--muted);
-      user-select:none;
-    }
-    .badge b{color:var(--text)}
-
-    .sub{
-      margin:8px 0 0;
-      color:var(--muted);
-      line-height:1.45;
-      font-size: 13px;
-      max-width: 980px;
-    }
-
-    .kpi{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (max-width: 900px){
-      .kpi{grid-template-columns: repeat(2, minmax(0, 1fr));}
-    }
-
-    .k{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      border-radius: var(--radius2);
-      padding: 10px 10px 8px;
-      box-shadow: 0 10px 26px rgba(0,0,0,.20);
-      position:relative;
-      overflow:hidden;
-    }
-    .k:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background: linear-gradient(90deg,
-        rgba(251,113,133,.14),
-        rgba(244,114,182,.10),
-        rgba(96,165,250,.12));
-      opacity:.8;
-      pointer-events:none;
-    }
-    .k > *{position:relative}
-    .k .t{font-size:11px;color:var(--muted)}
-    .k .v{font-size:18px;font-weight:900;margin-top:4px}
-    .k .s{font-size:11px;color:var(--muted); margin-top:2px}
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.18fr .82fr;
-      gap: 14px;
-      margin-top: 14px;
-    }
-    @media (max-width: 880px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    .card{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-
-    .pill{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      padding:8px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: var(--muted);
-      display:flex;
-      gap:8px;
-      align-items:center;
-      user-select:none;
-      width: fit-content;
-    }
-    .pill b{color:var(--text); font-weight:800}
-
-    .qhead{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .qmeta{color:var(--muted);font-size:12px}
-
-    .bar{
-      height: 10px;
-      border-radius: 999px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      overflow:hidden;
-      margin-top: 10px;
-    }
-    .bar > div{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg,
-        rgba(251,113,133,.95),
-        rgba(244,114,182,.95),
-        rgba(167,139,250,.95),
-        rgba(96,165,250,.95),
-        rgba(34,211,238,.95));
-      transition: width .25s ease;
-    }
-
-    .qtitle{
-      font-size: 18px;
-      font-weight: 900;
-      margin: 12px 0 0;
-      line-height: 1.25;
-      text-shadow: 0 10px 28px rgba(0,0,0,.25);
-    }
-
-    .answers{display:grid; gap:10px; margin-top: 12px;}
-    .ans{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding: 12px 12px;
-      border-radius: 16px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
-      transition: transform .06s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-      user-select:none;
-      position:relative;
-      overflow:hidden;
-    }
-    .ans:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background: linear-gradient(90deg,
-        rgba(251,113,133,.10),
-        rgba(96,165,250,.08),
-        rgba(34,211,238,.08));
-      opacity:.85;
-      pointer-events:none;
-    }
-    .ans > *{position:relative}
-    .ans:hover{background: rgba(255,255,255,.09); box-shadow: 0 10px 22px rgba(0,0,0,.18)}
-    .ans:active{transform: translateY(1px)}
-    .ans .key{
-      width: 32px; height: 32px;
-      border-radius: 12px;
-      border:1px solid var(--stroke);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:950;
-      background: rgba(0,0,0,.10);
-      flex: 0 0 auto;
-    }
-    .ans.good{border-color: rgba(52,211,153,.65); background: rgba(52,211,153,.14);}
-    .ans.bad{border-color: rgba(251,113,133,.70); background: rgba(251,113,133,.14);}
-
-    .feedback{
-      margin-top: 12px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      border-radius: var(--radius2);
-      padding: 12px;
-      color: var(--muted);
-      line-height:1.45;
-      display:none;
-    }
-    .feedback.show{display:block}
-    .feedback .tag{
-      display:inline-flex;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-weight:900;
-      font-size:12px;
-      margin-right: 8px;
-    }
-
-    .footrow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 12px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .hint{color: var(--muted); font-size: 12px;}
-
-    input, select, button{font-family:inherit}
-    input[type="text"], select{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      padding: 10px 12px;
-      outline:none;
-      width: 100%;
-    }
-
-    button{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.08);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 11px 14px;
-      font-weight: 850;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(0,0,0,.22);
-      transition: transform .06s ease, background .2s ease, border-color .2s ease;
-      user-select:none;
-    }
-    button:hover{background: rgba(255,255,255,.11)}
-    button:active{transform: translateY(1px)}
-    button:disabled{opacity:.55; cursor:not-allowed; transform:none !important;}
-
-    button.primary{
-      border-color: rgba(244,114,182,.55);
-      background: linear-gradient(135deg,
-        rgba(251,113,133,.25),
-        rgba(244,114,182,.18),
-        rgba(96,165,250,.18));
-    }
-    button.ghost{background: rgba(255,255,255,.05);}
-
-    .chk{
-      display:flex;align-items:center;gap:8px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      padding: 10px 12px;
-      border-radius: 14px;
-      color: var(--muted);
-      user-select:none;
-    }
-    .chk input{transform: scale(1.1)}
-
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      background: rgba(10,14,26,.88);
-      border:1px solid var(--stroke);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      box-shadow: var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 50;
-      max-width: min(720px, calc(100vw - 22px));
-      text-align:center;
-      font-size: 13px;
-    }
-    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
-
-    footer{
-      margin-top: 16px;
-      text-align:center;
-      color: rgba(238,242,255,.60);
-      font-size: 12px;
-    }
-    .small{font-size:11px;color:var(--muted)}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>GeoAgro Quiz BR · Brasil em números</title>
+<style>
+  :root{--ink:#1e1b3a;--soft:#5b5878;--line:#e6e4f2;--main:#4f46e5;--deep:#4338ca;--dark:#312e81;--pale:#eef2ff;--err:#dc2626;--ok:#16a34a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(--ink);background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:12px 14px 40px}
+  .top{width:100%;max-width:760px;display:flex;justify-content:space-between;align-items:center}
+  .hub{display:inline-flex;align-items:center;gap:6px;color:var(--deep);text-decoration:none;font-weight:600;font-size:.9rem;padding:7px 12px;border-radius:20px;border:1.5px solid var(--line)}
+  header{text-align:center;max-width:700px;margin:8px 0 6px}
+  h1{font-size:clamp(1.5rem,5.5vw,2.2rem);font-weight:900;color:var(--dark)}
+  .sub{color:var(--soft);font-size:.95rem;margin-top:4px}
+  .hud{display:flex;gap:7px;justify-content:center;margin:10px 0;flex-wrap:wrap;font-size:.88rem}
+  .hud span{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:30px;color:#fff;font-weight:600;background:var(--main)}
+  .hud span:nth-child(2){background:var(--deep)}.hud span:nth-child(3){background:var(--dark)}.hud span:nth-child(4){background:#6366f1}
+  .hud b{font-size:1.02rem;font-weight:800}
+  .card{width:min(760px,100%);background:#fff;border:3px solid var(--main);border-radius:22px;padding:20px;box-shadow:0 12px 30px rgba(79,70,229,.15)}
+  .levels{display:grid;gap:10px}
+  .lvl{display:flex;gap:14px;align-items:center;text-align:left;border:2px solid var(--line);border-radius:16px;padding:14px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+  .lvl:hover:not(:disabled){border-color:var(--main);background:var(--pale)}
+  .lvl:disabled{opacity:.5;cursor:not-allowed}
+  .lvl .n{width:44px;height:44px;border-radius:12px;background:var(--main);color:#fff;display:grid;place-items:center;font-weight:900;font-size:1.2rem;flex:none}
+  .lvl b{display:block;font-size:1.05rem;color:var(--dark)}.lvl small{color:var(--soft);font-size:.86rem}
+  .lvl .st{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--deep);white-space:nowrap}
+  .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  .btn{background:var(--main);color:#fff;border:0;padding:11px 22px;border-radius:12px;font-weight:800;cursor:pointer;font-size:1rem;font-family:inherit}
+  .btn.ghost{background:#fff;color:var(--deep);border:2px solid var(--line)}
+  .btn:disabled{opacity:.45}
+  .info{background:var(--pale);border:2px solid #c7d2fe;border-radius:14px;padding:10px 14px;font-size:.92rem;line-height:1.5;margin:12px 0}
+  .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem;color:var(--soft);flex-wrap:wrap}
+  .cat{background:var(--pale);color:var(--deep);font-weight:700;border-radius:20px;padding:4px 10px}
+  .bar{height:8px;border-radius:6px;background:var(--line);overflow:hidden;margin:10px 0 14px}.bar i{display:block;height:100%;background:var(--main);transition:width .3s}
+  .timer{height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin-bottom:12px}.timer i{display:block;height:100%;background:#f59e0b}
+  .q{font-size:clamp(1.05rem,3.4vw,1.25rem);font-weight:800;line-height:1.35;margin-bottom:14px}
+  .opts{display:grid;gap:9px}
+  .opt{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;font:inherit;font-size:.98rem;cursor:pointer;color:inherit}
+  .opt:hover:not(:disabled){border-color:var(--main);background:var(--pale)}
+  .opt .k{width:26px;height:26px;border-radius:8px;background:var(--pale);color:var(--deep);display:grid;place-items:center;font-weight:800;flex:none}
+  .opt.ok{border-color:var(--ok);background:#f0fdf4}.opt.ok .k{background:var(--ok);color:#fff}
+  .opt.no{border-color:var(--err);background:#fef2f2}.opt.no .k{background:var(--err);color:#fff}
+  .exp{margin-top:12px;border-left:4px solid var(--main);background:var(--pale);border-radius:10px;padding:10px 14px;font-size:.93rem;line-height:1.5}
+  .exp small{display:block;color:var(--soft);margin-top:4px;font-size:.8rem}
+  .exp .t{font-weight:800;margin-bottom:2px}.exp .t.no{color:var(--err)}.exp .t.ok{color:var(--ok)}
+  .big{font-size:2.6rem;font-weight:900;color:var(--dark);text-align:center}
+  .tally{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:.88rem;margin:8px 0}
+  .tally span{background:var(--pale);border-radius:20px;padding:4px 10px}.tally .neg{background:#fef2f2;color:var(--err)}
+  .savebox{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .savebox input{padding:10px 12px;border-radius:10px;border:2px solid var(--line);font-size:1rem;width:200px;font-family:inherit}
+  .center{text-align:center}.small{font-size:.82rem;color:var(--soft)}
+  .ranking{margin-top:16px;width:min(760px,100%);border:3px solid var(--main);border-radius:18px;padding:0 16px 12px;overflow:hidden}
+  .ranking h3{font-size:1.02rem;margin:0 -16px 8px;padding:10px 16px;background:var(--main);color:#fff}
+  .ranking ol{list-style:none}.ranking li{display:flex;justify-content:space-between;gap:10px;padding:7px 4px;border-bottom:1px solid var(--line);font-size:.92rem}
+  .ranking li:last-child{border-bottom:0}.ranking .pos{display:inline-block;min-width:2.1em;font-weight:800;color:var(--deep)}
+  .note{font-size:.8rem;color:var(--soft);margin-top:6px}
+  footer{margin-top:22px;font-size:.8rem;color:var(--soft);text-align:center;line-height:1.6;max-width:760px}
+  footer .credit{font-weight:700;color:var(--ink)}
+  [hidden]{display:none!important}
+  @media(max-width:600px){.card{padding:14px}.hud span{padding:4px 9px;font-size:.78rem}}
+</style>
 </head>
-
 <body>
-  <div class="wrap">
-
-    <div class="hero">
-      <div class="row between" style="gap:12px;">
-        <h1>GeoAgro Quiz BR <span class="small">✨ (multi-ano)</span></h1>
-        <span class="badge">Atalhos: <b>1–4</b> responde · <b>Enter</b> próxima · <b>R</b> reinicia</span>
-      </div>
-
-      <p class="sub">
-        Quiz de geografia + agro + pecuária + população + indicadores.
-        Banco expansível (você cola mais perguntas). <br>
-        <span class="small">Edição de dados: <b>2024</b> (rodapé). Perfis e recordes ficam no seu aparelho (localStorage).</span>
-      </p>
-
-      <div class="kpi">
-        <div class="k"><div class="t">Jogador</div><div class="v" id="kPlayer">Visitante</div><div class="s">salvo no aparelho</div></div>
-        <div class="k"><div class="t">Melhor</div><div class="v" id="kBest">0</div><div class="s">recorde do jogador</div></div>
-        <div class="k"><div class="t">Melhor sequência</div><div class="v" id="kStreakBest">0</div><div class="s">acertos seguidos (recorde)</div></div>
-        <div class="k"><div class="t">Banco</div><div class="v" id="kBank">0</div><div class="s">perguntas totais</div></div>
-      </div>
-    </div>
-
-    <div class="grid">
-
-      <!-- QUIZ -->
-      <div class="card">
-        <div class="qhead">
-          <div class="qmeta"><span id="qProg">0/0</span> &nbsp; <span id="qCat">Categoria: —</span></div>
-          <div class="qmeta" id="qTimer">⏳ —</div>
-        </div>
-        <div class="bar"><div id="barFill"></div></div>
-
-        <div class="qtitle" id="qText">Clique em <b>Começar</b> para iniciar 🙂</div>
-
-        <div class="answers" id="ansWrap" style="opacity:.7; pointer-events:none;">
-          <div class="ans"><div class="key">1</div><div class="txt">—</div></div>
-          <div class="ans"><div class="key">2</div><div class="txt">—</div></div>
-          <div class="ans"><div class="key">3</div><div class="txt">—</div></div>
-          <div class="ans"><div class="key">4</div><div class="txt">—</div></div>
-        </div>
-
-        <div class="feedback" id="fb"></div>
-
-        <div class="footrow">
-          <div class="row" style="gap:10px;">
-            <button class="ghost" id="btnExplain" disabled>Explicar</button>
-            <button class="ghost" id="btnNext" disabled>Próxima →</button>
-          </div>
-          <div class="hint" id="hint">Dica: responda com 1–4. Enter avança.</div>
-        </div>
-      </div>
-
-      <!-- CONFIG -->
-      <div class="card">
-        <div class="row between">
-          <div style="font-weight:950">Configurações</div>
-          <button class="ghost" id="btnReset">Resetar rodada</button>
-        </div>
-
-        <div style="margin-top:10px" class="row" style="align-items:flex-start">
-          <div style="flex: 0 0 auto;">
-            <div class="pill">Nome: <b id="nameLabel">Visitante</b></div>
-          </div>
-          <div style="flex:1; min-width:220px">
-            <input id="playerName" type="text" placeholder="Digite seu nome (ex: Ernandes)" />
-          </div>
-          <div style="flex:0 0 auto">
-            <button class="ghost" id="btnSaveName">Salvar</button>
-          </div>
-        </div>
-
-        <div style="margin-top:10px" class="chk"><input id="chkShuffleQ" type="checkbox" checked> Embaralhar perguntas</div>
-        <div style="margin-top:10px" class="chk"><input id="chkShuffleA" type="checkbox" checked> Embaralhar alternativas</div>
-        <div style="margin-top:10px" class="chk"><input id="chkTrain" type="checkbox" checked> Modo treino (feedback imediato)</div>
-
-        <div style="margin-top:10px" class="row between">
-          <div class="pill">Quantidade: <b id="nLabel">10</b></div>
-          <select id="selN" style="max-width:220px">
-            <option value="2">2 perguntas</option>
-            <option value="5">5 perguntas</option>
-            <option value="10" selected>10 perguntas</option>
-            <option value="25">25 perguntas</option>
-            <option value="40">40 perguntas</option>
-          </select>
-        </div>
-
-        <div style="margin-top:10px" class="row between">
-          <div class="pill">Tempo: <b id="tLabel">Sem limite</b></div>
-          <select id="selT" style="max-width:220px">
-            <option value="0" selected>Sem limite</option>
-            <option value="300">5 min</option>
-            <option value="600">10 min</option>
-            <option value="900">15 min</option>
-          </select>
-        </div>
-
-        <div style="margin-top:10px">
-          <button class="primary" id="btnStart" style="width:100%">Começar / Reiniciar</button>
-        </div>
-
-        <div style="margin-top:10px" class="small">
-          Você vs você mesmo — conquistas por nome (localStorage).
-          <span style="float:right" id="deltaLabel">—</span>
-        </div>
-
-      </div>
-
-    </div>
-
-    <footer>
-      <b>GeoAgro Quiz BR</b> — Edição de dados <b>2024</b><br>
-      Autor: <b>Ernandes Junior</b> · armazenamento local (localStorage)
-    </footer>
-  </div>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-  (() => {
-    "use strict";
-
-    // Erro visível (pra você nunca ficar no escuro)
-    window.addEventListener("error", (e) => {
-      alert("Erro no JS: " + e.message + "\\n" + (e.filename || "") + ":" + (e.lineno || ""));
-    });
-
-    const $ = (id) => document.getElementById(id);
-
-    const ui = {
-      toast: $("toast"),
-
-      kPlayer: $("kPlayer"),
-      kBest: $("kBest"),
-      kStreakBest: $("kStreakBest"),
-      kBank: $("kBank"),
-
-      qProg: $("qProg"),
-      qCat: $("qCat"),
-      qText: $("qText"),
-      ansWrap: $("ansWrap"),
-      fb: $("fb"),
-      barFill: $("barFill"),
-      qTimer: $("qTimer"),
-
-      btnExplain: $("btnExplain"),
-      btnNext: $("btnNext"),
-      btnStart: $("btnStart"),
-      btnReset: $("btnReset"),
-
-      chkShuffleQ: $("chkShuffleQ"),
-      chkShuffleA: $("chkShuffleA"),
-      chkTrain: $("chkTrain"),
-
-      selN: $("selN"),
-      selT: $("selT"),
-      nLabel: $("nLabel"),
-      tLabel: $("tLabel"),
-      hint: $("hint"),
-
-      playerName: $("playerName"),
-      btnSaveName: $("btnSaveName"),
-      nameLabel: $("nameLabel"),
-      deltaLabel: $("deltaLabel"),
-    };
-
-    for (const [k, el] of Object.entries(ui)) {
-      if (!el) throw new Error("Elemento não encontrado: #" + k);
-    }
-
-    // ===== toast =====
-    let toastT = null;
-    function toast(msg){
-      ui.toast.textContent = msg;
-      ui.toast.classList.add("show");
-      clearTimeout(toastT);
-      toastT = setTimeout(()=>ui.toast.classList.remove("show"), 1700);
-    }
-
-    // ===== utils =====
-    function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
-      }
-      return arr;
-    }
-    function pickN(arr,n){
-      const copy = arr.slice();
-      shuffle(copy);
-      return copy.slice(0,n);
-    }
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    // ===== perfis =====
-    const PROFILES_KEY = "geoagro_quiz_profiles_v2";
-    const ACTIVE_KEY   = "geoagro_quiz_active_player_v2";
-
-    function loadProfiles(){
-      try { return JSON.parse(localStorage.getItem(PROFILES_KEY) || "{}"); }
-      catch(_){ return {}; }
-    }
-    function saveProfiles(p){ localStorage.setItem(PROFILES_KEY, JSON.stringify(p)); }
-    function getActiveName(){ return (localStorage.getItem(ACTIVE_KEY) || "").trim(); }
-    function setActiveName(name){ localStorage.setItem(ACTIVE_KEY, name.trim()); }
-
-    let profiles = loadProfiles();
-    function ensureProfile(name){
-      if(!profiles[name]) profiles[name] = { best:0, streakBest:0, lastScore:0, lastTotal:0 };
-      return profiles[name];
-    }
-
-    let activeName = getActiveName() || "Visitante";
-    ensureProfile(activeName);
-    saveProfiles(profiles);
-
-    function refreshPlayerUI(){
-      const p = ensureProfile(activeName);
-      ui.kPlayer.textContent = activeName;
-      ui.nameLabel.textContent = activeName;
-      ui.kBest.textContent = String(p.best);
-      ui.kStreakBest.textContent = String(p.streakBest);
-      ui.deltaLabel.textContent = (p.lastTotal > 0) ? `Última: ${p.lastScore}/${p.lastTotal}` : "—";
-    }
-
-    function setPlayer(raw){
-      const name = (raw || "").trim();
-      activeName = name ? name : "Visitante";
-      ensureProfile(activeName);
-      setActiveName(activeName);
-      saveProfiles(profiles);
-      ui.playerName.value = (activeName === "Visitante") ? "" : activeName;
-      refreshPlayerUI();
-      toast("Jogador: " + activeName);
-    }
-
-    ui.btnSaveName.addEventListener("click", () => setPlayer(ui.playerName.value));
-    ui.playerName.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") { e.preventDefault(); setPlayer(ui.playerName.value); }
-    });
-
-    // ===== banco =====
-    const bank = [];
-    function addQ(id, cat, q, a, correct, exp, src){
-      if(!Array.isArray(a) || a.length !== 4) throw new Error("Questão sem 4 alternativas: " + id);
-      bank.push({ id, cat, q, a, correct, exp, src });
-    }
-
-    // 2 perguntas teste
-    addQ("Q1","Capitais","Qual é a capital do Amapá?",
-      ["Macapá","Belém","Boa Vista","Rio Branco"], 0,
-      "A capital do Amapá é Macapá.",
-      "Fonte: geografia política do Brasil."
-    );
-    addQ("Q2","Agro (MT)","Qual é a principal produção agrícola do Mato Grosso (séries recentes)?",
-      ["Soja","Uva","Cacau","Maçã"], 0,
-      "Mato Grosso é líder nacional em soja em séries recentes.",
-      "Fonte: IBGE — PAM (séries recentes)."
-    );
-
-    // ======= ESPAÇO PARA O PACOTÃO =======
-    addQ("CAP01","Capitais","Qual é a capital de Rondônia?",
-  ["Porto Velho","Rio Branco","Boa Vista","Macapá"],0,
-  "A capital de Rondônia é Porto Velho.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP02","Capitais","Qual é a capital do Pará?",
-  ["Belém","Manaus","Macapá","São Luís"],0,
-  "A capital do Pará é Belém.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP03","Capitais","Qual é a capital do Tocantins?",
-  ["Palmas","Goiânia","Cuiabá","Teresina"],0,
-  "A capital do Tocantins é Palmas.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP04","Capitais","Qual é a capital do Maranhão?",
-  ["São Luís","Teresina","Fortaleza","Belém"],0,
-  "A capital do Maranhão é São Luís.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP05","Capitais","Qual é a capital do Piauí?",
-  ["Teresina","Natal","Aracaju","Maceió"],0,
-  "A capital do Piauí é Teresina.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP06","Capitais","Qual é a capital de Pernambuco?",
-  ["Recife","Salvador","Maceió","João Pessoa"],0,
-  "A capital de Pernambuco é Recife.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP07","Capitais","Qual é a capital de Sergipe?",
-  ["Aracaju","Maceió","Salvador","Recife"],0,
-  "A capital de Sergipe é Aracaju.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP08","Capitais","Qual é a capital do Espírito Santo?",
-  ["Vitória","Belo Horizonte","Rio de Janeiro","Curitiba"],0,
-  "A capital do Espírito Santo é Vitória.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP09","Capitais","Qual é a capital de Goiás?",
-  ["Goiânia","Brasília","Cuiabá","Campo Grande"],0,
-  "A capital de Goiás é Goiânia.","Fonte: Geografia política do Brasil."
-);
-
-addQ("CAP10","Capitais","Qual é a capital de Minas Gerais?",
-  ["Belo Horizonte","Vitória","São Paulo","Goiânia"],0,
-  "A capital de Minas Gerais é Belo Horizonte.","Fonte: Geografia política do Brasil."
-);
-addQ("REG01","Regiões","Qual destes estados pertence à Região Norte?",
-  ["Acre","Bahia","Paraná","Minas Gerais"],0,
-  "Acre faz parte da Região Norte.","Fonte: Divisão regional (IBGE)."
-);
-
-addQ("REG02","Regiões","Qual destes estados pertence à Região Nordeste?",
-  ["Ceará","Goiás","Santa Catarina","Mato Grosso"],0,
-  "Ceará faz parte da Região Nordeste.","Fonte: Divisão regional (IBGE)."
-);
-
-addQ("REG03","Regiões","Qual destes estados pertence à Região Centro-Oeste?",
-  ["Mato Grosso do Sul","Pernambuco","Rio Grande do Sul","Pará"],0,
-  "MS faz parte da Região Centro-Oeste.","Fonte: Divisão regional (IBGE)."
-);
-
-addQ("REG04","Regiões","Qual destes estados pertence à Região Sudeste?",
-  ["Rio de Janeiro","Maranhão","Amazonas","Alagoas"],0,
-  "RJ faz parte da Região Sudeste.","Fonte: Divisão regional (IBGE)."
-);
-
-addQ("REG05","Regiões","Qual destes estados pertence à Região Sul?",
-  ["Santa Catarina","Piauí","Pará","Sergipe"],0,
-  "SC faz parte da Região Sul.","Fonte: Divisão regional (IBGE)."
-);
-
-addQ("REG06","UF (siglas)","Qual é a sigla de Mato Grosso?",
-  ["MT","MS","MG","TO"],0,
-  "A sigla de Mato Grosso é MT.","Fonte: Siglas oficiais das UFs."
-);
-
-addQ("REG07","UF (siglas)","Qual é a sigla do Paraná?",
-  ["PR","PA","PB","PE"],0,
-  "A sigla do Paraná é PR.","Fonte: Siglas oficiais das UFs."
-);
-
-addQ("REG08","UF (siglas)","Qual é a sigla de Santa Catarina?",
-  ["SC","SE","SP","RS"],0,
-  "A sigla de Santa Catarina é SC.","Fonte: Siglas oficiais das UFs."
-);
-
-addQ("REG09","UF (siglas)","Qual é a sigla do Rio Grande do Norte?",
-  ["RN","RO","RR","RJ"],0,
-  "A sigla do Rio Grande do Norte é RN.","Fonte: Siglas oficiais das UFs."
-);
-
-addQ("REG10","UF (siglas)","Qual é a sigla do Distrito Federal?",
-  ["DF","DR","FD","BD"],0,
-  "A sigla do Distrito Federal é DF.","Fonte: Siglas oficiais das UFs."
-);
-addQ("HID01","Hidrografia","Qual rio é o principal eixo da Bacia Amazônica?",
-  ["Rio Amazonas","Rio Paraná","Rio São Francisco","Rio Tocantins"],0,
-  "O Rio Amazonas é o principal eixo da bacia.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID02","Hidrografia","Qual rio é mais associado ao Pantanal no MS/MT?",
-  ["Rio Paraguai","Rio Doce","Rio Paraíba do Sul","Rio Capibaribe"],0,
-  "O Rio Paraguai é a espinha dorsal do Pantanal.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID03","Hidrografia","Qual rio é o principal da Bacia do São Francisco?",
-  ["Rio São Francisco","Rio Uruguai","Rio Madeira","Rio Xingu"],0,
-  "O Rio São Francisco dá nome à bacia.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID04","Hidrografia","Qual rio forma o famoso encontro das águas em Manaus?",
-  ["Rio Negro e Rio Solimões","Rio Tapajós e Rio Xingu","Rio Tocantins e Rio Araguaia","Rio Paraná e Rio Tietê"],0,
-  "Em Manaus, Negro e Solimões se encontram.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID05","Relevo","Como se chama a grande planície alagável do Centro-Oeste?",
-  ["Pantanal","Pampas","Caatinga","Serra do Mar"],0,
-  "O Pantanal é uma vasta planície alagável.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID06","Relevo","A Serra do Mar está mais associada a qual faixa do Brasil?",
-  ["Litoral do Sudeste/Sul","Interior do Nordeste","Centro-Oeste pantaneiro","Extremo Norte amazônico"],0,
-  "A Serra do Mar acompanha parte do litoral Sudeste/Sul.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID07","Hidrografia","Qual destas bacias é mais ligada ao Sul do Brasil?",
-  ["Bacia do Uruguai","Bacia do Tocantins-Araguaia","Bacia Amazônica","Bacia do Parnaíba"],0,
-  "A Bacia do Uruguai é típica do Sul.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID08","Hidrografia","Qual destes rios NÃO pertence à Região Norte?",
-  ["Rio Paraná","Rio Madeira","Rio Tapajós","Rio Negro"],0,
-  "O Rio Paraná é mais associado ao Centro-Sul.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID09","Relevo","Qual é um exemplo clássico de planalto no Brasil?",
-  ["Planalto Central","Pantanal","Planície Amazônica","Delta do Parnaíba"],0,
-  "O Planalto Central é um exemplo clássico.","Fonte: Geografia física do Brasil."
-);
-
-addQ("HID10","Hidrografia","Qual bioma é muito associado ao rio São Francisco no interior?",
-  ["Caatinga","Pampa","Amazônia","Pantanal"],0,
-  "O rio cruza áreas extensas do semiárido (Caatinga).","Fonte: Geografia física do Brasil."
-);
-addQ("BIO01","Biomas","Qual bioma é dominante na Região Norte do Brasil?",
-  ["Amazônia","Caatinga","Pampa","Mata Atlântica"],0,
-  "A Amazônia é o bioma mais associado à Região Norte.","Fonte: Biomas do Brasil."
-);
-
-addQ("BIO02","Biomas","Qual bioma é mais associado ao semiárido do Nordeste?",
-  ["Caatinga","Amazônia","Pantanal","Pampa"],0,
-  "A Caatinga é típica do semiárido.","Fonte: Biomas do Brasil."
-);
-
-addQ("BIO03","Biomas","Qual bioma é mais associado ao Sul do Brasil?",
-  ["Pampa","Caatinga","Pantanal","Amazônia"],0,
-  "O Pampa é típico do extremo sul.","Fonte: Biomas do Brasil."
-);
-
-addQ("BIO04","Biomas","Qual bioma ocupa grande parte do Centro-Oeste e interior do Sudeste/Nordeste?",
-  ["Cerrado","Pampa","Caatinga","Pantanal"],0,
-  "O Cerrado é um grande bioma do Brasil central.","Fonte: Biomas do Brasil."
-);
-
-addQ("BIO05","Biomas","Qual bioma é mais associado ao litoral do Brasil?",
-  ["Mata Atlântica","Pampa","Caatinga","Cerrado"],0,
-  "A Mata Atlântica acompanha a faixa litorânea.","Fonte: Biomas do Brasil."
-);
-
-addQ("BIO06","Clima","Qual clima predomina na maior parte da Amazônia?",
-  ["Equatorial","Semiárido","Temperado","Subtropical seco"],0,
-  "O clima equatorial é quente e úmido.","Fonte: Climas do Brasil."
-);
-
-addQ("BIO07","Clima","Qual clima está mais associado ao Sertão do Nordeste?",
-  ["Semiárido","Equatorial","Temperado oceânico","Alpino"],0,
-  "O semiárido tem chuvas escassas e irregulares.","Fonte: Climas do Brasil."
-);
-
-addQ("BIO08","Clima","Qual clima é mais comum no Sul do Brasil?",
-  ["Subtropical","Equatorial","Semiárido","Desértico"],0,
-  "O Sul tem maior presença de clima subtropical.","Fonte: Climas do Brasil."
-);
-
-addQ("BIO09","Conceitos","O que é biodiversidade?",
-  ["Variedade de vida (genes, espécies e ecossistemas)","Apenas número de árvores","Apenas animais de grande porte","Somente espécies invasoras"],0,
-  "Biodiversidade envolve diferentes níveis de diversidade.","Fonte: Conceitos ecológicos."
-);
-
-addQ("BIO10","Conceitos","O que significa 'bacia hidrográfica'?",
-  ["Área drenada por um rio e seus afluentes","Um lago isolado","Um aquífero subterrâneo apenas","Uma ilha oceânica"],0,
-  "Bacia = área que drena para um sistema de rios.","Fonte: Conceitos de hidrologia."
-);
-addQ("AGP01","Agro","Soja é classificada principalmente como:",
-  ["Oleaginosa","Fruta cítrica","Tubérculo","Fibra têxtil"],0,
-  "Soja é uma oleaginosa (gera óleo e farelo).","Fonte: Conceitos de agro."
-);
-
-addQ("AGP02","Agro","Milho é classificado principalmente como:",
-  ["Cereal","Leguminosa","Fruta","Raiz"],0,
-  "Milho é um cereal.","Fonte: Conceitos de agro."
-);
-
-addQ("AGP03","Agro","Algodão é mais associado à produção de:",
-  ["Fibra","Leite","Óleo comestível","Açúcar"],0,
-  "Algodão é uma cultura fibrosa.","Fonte: Conceitos de agro."
-);
-
-addQ("AGP04","Agro","Cana-de-açúcar é matéria-prima importante para:",
-  ["Açúcar e etanol","Café e chocolate","Farinha e pão","Vinho e cerveja"],0,
-  "Cana é base para açúcar e etanol.","Fonte: Cadeias produtivas."
-);
-
-addQ("AGP05","Pecuária","Qual item é um produto típico da pecuária leiteira?",
-  ["Leite","Algodão","Soja","Cacau"],0,
-  "Leite é produto direto da pecuária leiteira.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGP06","Pecuária","O termo 'rebanho bovino' se refere a:",
-  ["Conjunto de bois e vacas","Conjunto de aves","Conjunto de peixes","Conjunto de abelhas"],0,
-  "Bovinos = gado (bois e vacas).","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGP07","Agro (Brasil)","Qual cultura está fortemente ligada ao café arábica no Brasil?",
-  ["Café","Cana","Arroz","Algodão"],0,
-  "Café arábica é uma cultura agrícola específica.","Fonte: Conceitos de agro."
-);
-
-addQ("AGP08","Agro","Qual dessas é uma leguminosa?",
-  ["Feijão","Arroz","Milho","Trigo"],0,
-  "Feijão é leguminosa.","Fonte: Botânica/Agro."
-);
-
-addQ("AGP09","Agro","Qual dessas é uma cultura típica de clima temperado/subtropical no Brasil?",
-  ["Trigo","Cacau","Açaí","Caju"],0,
-  "Trigo é mais associado a climas mais frios no Brasil.","Fonte: Conceitos de agro/clima."
-);
-
-addQ("AGP10","Agro","Qual é um exemplo de rotação de culturas (ideia geral)?",
-  ["Alternar culturas no mesmo talhão em safras diferentes","Plantar só uma cultura para sempre","Queimar a palhada todo ano","Retirar toda cobertura do solo"],0,
-  "Rotação ajuda a reduzir pragas e melhorar o solo.","Fonte: Práticas agrícolas."
-);
-addQ("IND01","Indicadores","O que o IDH/IDHM tenta medir (ideia central)?",
-  ["Desenvolvimento humano (renda, educação e longevidade)","Apenas PIB","Apenas área territorial","Apenas número de rios"],0,
-  "IDH combina dimensões sociais e econômicas.","Fonte: Conceitos de indicadores."
-);
-
-addQ("IND02","Indicadores","PIB significa:",
-  ["Produto Interno Bruto","Programa de Inclusão Básica","Plano Integrado de Bacias","Pesquisa de Índice Brasileiro"],0,
-  "PIB = Produto Interno Bruto.","Fonte: Conceitos de economia."
-);
-
-addQ("IND03","Indicadores","Qual destes é um exemplo de indicador demográfico?",
-  ["População","Altitude","Tipo de solo","Profundidade do rio"],0,
-  "População é um indicador demográfico.","Fonte: Conceitos de demografia."
-);
-
-addQ("IND04","Cidadania","O que é uma capital estadual?",
-  ["Sede do governo do estado","A maior cidade do estado sempre","Um município rural","Um distrito industrial"],0,
-  "Capital é a sede administrativa do estado.","Fonte: Geografia política."
-);
-
-addQ("IND05","Cidadania","O que é uma Unidade da Federação (UF)?",
-  ["Estado ou Distrito Federal","Apenas município","Apenas bairro","Apenas região"],0,
-  "UF = estado/DF no Brasil.","Fonte: Conceitos administrativos."
-);
-
-addQ("IND06","Conceitos","O que é 'urbanização' (ideia geral)?",
-  ["Crescimento e concentração da população em áreas urbanas","Aumento de rios","Formação de dunas","Plantio de florestas nativas"],0,
-  "Urbanização envolve expansão e dinâmica urbana.","Fonte: Geografia humana."
-);
-
-addQ("IND07","Conceitos","Qual é um exemplo de infraestrutura urbana?",
-  ["Rede de esgoto","Recife de coral","Nascente de rio","Copaíba nativa"],0,
-  "Infra urbana inclui saneamento, vias, iluminação etc.","Fonte: Geografia urbana."
-);
-
-addQ("IND08","Conceitos","O que é 'desmatamento'?",
-  ["Remoção da cobertura florestal","Aumento de chuvas","Plantio de mudas","Reforma de estradas"],0,
-  "Desmatamento é a retirada de vegetação florestal.","Fonte: Conceitos ambientais."
-);
-
-addQ("IND09","Conceitos","O que é 'queimada' (no uso do solo)?",
-  ["Uso do fogo para limpar área","Irrigação por aspersão","Adubação verde","Rotação de culturas"],0,
-  "Queimada é fogo aplicado para limpeza/renovação.","Fonte: Conceitos ambientais/agro."
-);
-
-addQ("IND10","Conceitos","O que é 'conservação ambiental'?",
-  ["Proteção e uso sustentável dos recursos naturais","Exploração sem limites","Apenas plantar eucalipto","Só fiscalizar pesca"],0,
-  "Conservação envolve manter ecossistemas e serviços.","Fonte: Conceitos ambientais."
-);
-addQ("TRK01","Pegadinhas","Qual alternativa NÃO é uma Unidade da Federação (UF) do Brasil?",
-  ["Acre","Paraná","Uruguai","Sergipe"],2,
-  "Uruguai é um país, não uma UF.","Fonte: Geografia política do Brasil."
-);
-
-addQ("TRK02","Pegadinhas","Qual alternativa está INCORRETA sobre capitais?",
-  ["Cuiabá é capital de MT","Macapá é capital do AP","Belém é capital do AM","Aracaju é capital de SE"],2,
-  "Belém é capital do Pará (PA), não do Amazonas (AM).","Fonte: Geografia política do Brasil."
-);
-
-addQ("TRK03","Pegadinhas","Qual alternativa NÃO é um bioma brasileiro?",
-  ["Cerrado","Pampa","Taiga","Caatinga"],2,
-  "Taiga é um bioma típico de altas latitudes no Hemisfério Norte.","Fonte: Biomas (conceitos gerais)."
-);
-
-addQ("TRK04","Pegadinhas","Qual alternativa é um estado (e não uma região)?",
-  ["Nordeste","Norte","Centro-Oeste","Tocantins"],3,
-  "Tocantins é um estado (UF).","Fonte: Divisão político-administrativa do Brasil."
-);
-
-addQ("TRK05","Pegadinhas","Qual alternativa NÃO é uma região do Brasil (IBGE)?",
-  ["Sudeste","Noroeste","Nordeste","Centro-Oeste"],1,
-  "O Brasil tem 5 regiões: Norte, Nordeste, Centro-Oeste, Sudeste e Sul.","Fonte: IBGE (divisão regional)."
-);
-
-addQ("TRK06","Pegadinhas","Qual alternativa está INCORRETA sobre o Pantanal?",
-  ["É uma planície alagável","Tem ligação com o rio Paraguai","Fica no Centro-Oeste","É o maior bioma do Brasil"],3,
-  "O maior bioma do Brasil é a Amazônia; o Pantanal é o menor em área.","Fonte: Biomas do Brasil (conceitos gerais)."
-);
-
-addQ("TRK07","Pegadinhas","Qual alternativa NÃO é um oceano?",
-  ["Atlântico","Índico","Pacífico","Amazônico"],3,
-  "“Amazônico” se refere à região/bacia; não é oceano.","Fonte: Geografia geral."
-);
-
-addQ("TRK08","Pegadinhas","Qual alternativa NÃO é capital estadual?",
-  ["Fortaleza","Curitiba","Campinas","Salvador"],2,
-  "Campinas é um município importante, mas não é capital.","Fonte: Geografia política do Brasil."
-);
-
-addQ("TRK09","Pegadinhas","Qual alternativa é uma UF da Região Sul?",
-  ["Piauí","Pará","Santa Catarina","Goiás"],2,
-  "Santa Catarina pertence à Região Sul.","Fonte: Divisão regional do Brasil (IBGE)."
-);
-
-addQ("TRK10","Pegadinhas","Qual alternativa NÃO é um indicador socioeconômico?",
-  ["PIB","IDH","Gini","Altitude"],3,
-  "Altitude é variável física/geográfica, não indicador socioeconômico.","Fonte: Conceitos de indicadores."
-);
-addQ("IND11","Indicadores","O índice de Gini mede principalmente:",
-  ["Renda média","Desigualdade","Tamanho do PIB","Taxa de natalidade"],1,
-  "Gini é usado para desigualdade (quanto maior, mais desigual).","Fonte: Conceitos de economia/indicadores."
-);
-
-addQ("IND12","Indicadores","No Gini, valores mais próximos de 0 indicam:",
-  ["Maior desigualdade","Maior igualdade","Maior PIB","Maior população"],1,
-  "Gini próximo de 0 sugere distribuição mais igualitária.","Fonte: Conceitos de economia/indicadores."
-);
-
-addQ("IND13","Indicadores","O que o PIB per capita tenta aproximar?",
-  ["PIB por pessoa","PIB por km²","PIB por município","PIB por escola"],0,
-  "PIB per capita é uma média: PIB dividido pela população.","Fonte: Conceitos de economia."
-);
-
-addQ("IND14","Indicadores","Qual combinação é típica do IDH/IDHM?",
-  ["Educação, renda, longevidade","Renda, clima, altitude","Chuva, solo, relevo","PIB, área, latitude"],0,
-  "IDH combina educação, renda e longevidade.","Fonte: Conceitos de desenvolvimento humano."
-);
-
-addQ("IND15","Indicadores","Qual indicador está MAIS ligado a saúde pública (de forma direta)?",
-  ["Expectativa de vida","Área territorial","Latitude","Altitude média"],0,
-  "Expectativa de vida é um indicador de saúde/condições de vida.","Fonte: Conceitos de demografia/saúde."
-);
-
-addQ("IND16","Indicadores","Qual alternativa descreve melhor “inflação”?",
-  ["Queda generalizada de preços","Aumento geral de preços","Aumento de exportações","Queda do PIB total"],1,
-  "Inflação é aumento generalizado e persistente dos preços.","Fonte: Conceitos de macroeconomia."
-);
-
-addQ("IND17","Indicadores","O que a taxa de desemprego mede?",
-  ["Pessoas fora do país","Pessoas sem carteira","Pessoas sem trabalho buscando trabalho","Pessoas com renda alta"],2,
-  "Desemprego (conceito padrão) envolve pessoas sem trabalho e procurando trabalho.","Fonte: Conceitos de trabalho/IBGE (ideia geral)."
-);
-
-addQ("IND18","Indicadores","Qual alternativa é um indicador ambiental urbano (ideia geral)?",
-  ["Arborização de vias","PIB estadual","Taxa SELIC","Câmbio nominal"],0,
-  "Arborização é um indicador de qualidade do espaço urbano.","Fonte: Conceitos urbanos/ambientais."
-);
-
-addQ("IND19","Indicadores","Qual alternativa costuma ser medida em porcentagem (%), não em reais?",
-  ["Taxa de alfabetização","PIB nominal","Valor da soja","Arrecadação total"],0,
-  "Taxas sociais geralmente são percentuais.","Fonte: Conceitos de indicadores."
-);
-
-addQ("IND20","Indicadores","Qual alternativa está INCORRETA?",
-  ["PIB mede produção econômica","IDH mede dimensões humanas","Gini mede desigualdade","PIB mede biodiversidade"],3,
-  "PIB não mede biodiversidade; isso seria outra família de indicadores.","Fonte: Conceitos de indicadores."
-);
-addQ("NUM01","Brasil em números","População do Brasil (estimativa 2024, aprox.) fica mais perto de:",
-  ["190 milhões","212 milhões","235 milhões","260 milhões"],1,
-  "O Brasil fica na casa de ~212 milhões na estimativa 2024 (aprox.).","Fonte: Estimativas populacionais (IBGE, ideia geral)."
-);
-
-addQ("NUM02","Brasil em números","A Região Norte tem população (aprox.) mais perto de:",
-  ["5 milhões","12 milhões","19 milhões","35 milhões"],2,
-  "A Região Norte fica na ordem de ~19 milhões (aprox.).","Fonte: Estimativas regionais (IBGE, ideia geral)."
-);
-
-addQ("NUM03","Brasil em números","A Região Sudeste tem população (aprox.) mais perto de:",
-  ["40 milhões","60 milhões","90 milhões","120 milhões"],2,
-  "O Sudeste fica perto de ~90 milhões (aprox.).","Fonte: Estimativas regionais (IBGE, ideia geral)."
-);
-
-addQ("NUM04","Economia (aprox.)","O PIB do Brasil costuma ser citado na ordem de:",
-  ["Milhões de reais","Bilhões de reais","Trilhões de reais","Quatrilhões de reais"],2,
-  "PIB do Brasil é da ordem de trilhões (R$).","Fonte: Conceitos macroeconômicos (ordem de grandeza)."
-);
-
-addQ("NUM05","Economia (aprox.)","Qual UF é mais conhecida por ter o maior PIB estadual?",
-  ["São Paulo","Goiás","Pará","Ceará"],0,
-  "Em geral, São Paulo lidera o PIB estadual.","Fonte: PIB por UF (IBGE, ideia geral)."
-);
-
-addQ("NUM06","Demografia (aprox.)","A taxa de urbanização do Brasil (aprox.) é mais perto de:",
-  ["35%","55%","85%","98%"],2,
-  "O Brasil é majoritariamente urbano, perto de ~85% (aprox.).","Fonte: Demografia brasileira (ordem de grandeza)."
-);
-
-addQ("NUM07","Agro (aprox.)","A soja brasileira é medida principalmente em:",
-  ["Litros","Toneladas","Metros cúbicos","Quilômetros"],1,
-  "Produções agrícolas de grãos são reportadas em toneladas.","Fonte: Conceitos de estatísticas agrícolas."
-);
-
-addQ("NUM08","Pecuária (aprox.)","O rebanho bovino do Brasil é da ordem de:",
-  ["20 milhões","80 milhões","200 milhões","900 milhões"],2,
-  "O Brasil tem rebanho bovino na casa de centenas de milhões (aprox.).","Fonte: Conceitos/ordem de grandeza (PPM/IBGE, geral)."
-);
-
-addQ("NUM09","Economia (aprox.)","Qual alternativa é mais plausível para inflação anual típica (em anos “normais”)?",
-  ["0,2%","4%","40%","140%"],1,
-  "Inflação anual típica costuma ficar em poucos pontos percentuais.","Fonte: Conceitos macroeconômicos."
-);
-
-addQ("NUM10","Economia (aprox.)","Qual alternativa é uma unidade comum para taxa de juros no Brasil?",
-  ["% ao ano","km por hora","litros por dia","kg por hectare"],0,
-  "Juros (SELIC e outras) são normalmente expressos em % ao ano.","Fonte: Conceitos de economia."
-);
-addQ("NUM01","Brasil em números","População do Brasil (estimativa 2024, aprox.) fica mais perto de:",
-  ["190 milhões","212 milhões","235 milhões","260 milhões"],1,
-  "O Brasil fica na casa de ~212 milhões na estimativa 2024 (aprox.).","Fonte: Estimativas populacionais (IBGE, ideia geral)."
-);
-
-addQ("NUM02","Brasil em números","A Região Norte tem população (aprox.) mais perto de:",
-  ["5 milhões","12 milhões","19 milhões","35 milhões"],2,
-  "A Região Norte fica na ordem de ~19 milhões (aprox.).","Fonte: Estimativas regionais (IBGE, ideia geral)."
-);
-
-addQ("NUM03","Brasil em números","A Região Sudeste tem população (aprox.) mais perto de:",
-  ["40 milhões","60 milhões","90 milhões","120 milhões"],2,
-  "O Sudeste fica perto de ~90 milhões (aprox.).","Fonte: Estimativas regionais (IBGE, ideia geral)."
-);
-
-addQ("NUM04","Economia (aprox.)","O PIB do Brasil costuma ser citado na ordem de:",
-  ["Milhões de reais","Bilhões de reais","Trilhões de reais","Quatrilhões de reais"],2,
-  "PIB do Brasil é da ordem de trilhões (R$).","Fonte: Conceitos macroeconômicos (ordem de grandeza)."
-);
-
-addQ("NUM05","Economia (aprox.)","Qual UF é mais conhecida por ter o maior PIB estadual?",
-  ["São Paulo","Goiás","Pará","Ceará"],0,
-  "Em geral, São Paulo lidera o PIB estadual.","Fonte: PIB por UF (IBGE, ideia geral)."
-);
-
-addQ("NUM06","Demografia (aprox.)","A taxa de urbanização do Brasil (aprox.) é mais perto de:",
-  ["35%","55%","85%","98%"],2,
-  "O Brasil é majoritariamente urbano, perto de ~85% (aprox.).","Fonte: Demografia brasileira (ordem de grandeza)."
-);
-
-addQ("NUM07","Agro (aprox.)","A soja brasileira é medida principalmente em:",
-  ["Litros","Toneladas","Metros cúbicos","Quilômetros"],1,
-  "Produções agrícolas de grãos são reportadas em toneladas.","Fonte: Conceitos de estatísticas agrícolas."
-);
-
-addQ("NUM08","Pecuária (aprox.)","O rebanho bovino do Brasil é da ordem de:",
-  ["20 milhões","80 milhões","200 milhões","900 milhões"],2,
-  "O Brasil tem rebanho bovino na casa de centenas de milhões (aprox.).","Fonte: Conceitos/ordem de grandeza (PPM/IBGE, geral)."
-);
-
-addQ("NUM09","Economia (aprox.)","Qual alternativa é mais plausível para inflação anual típica (em anos “normais”)?",
-  ["0,2%","4%","40%","140%"],1,
-  "Inflação anual típica costuma ficar em poucos pontos percentuais.","Fonte: Conceitos macroeconômicos."
-);
-
-addQ("NUM10","Economia (aprox.)","Qual alternativa é uma unidade comum para taxa de juros no Brasil?",
-  ["% ao ano","km por hora","litros por dia","kg por hectare"],0,
-  "Juros (SELIC e outras) são normalmente expressos em % ao ano.","Fonte: Conceitos de economia."
-);
-addQ("GEO11","Geografia geral","Qual linha imaginária divide a Terra em Hemisfério Norte e Sul?",
-  ["Trópico de Capricórnio","Trópico de Câncer","Linha do Equador","Meridiano de Greenwich"],2,
-  "A Linha do Equador divide Norte e Sul.","Fonte: Geografia geral."
-);
-
-addQ("GEO12","Geografia geral","O Meridiano de Greenwich está ligado principalmente a:",
-  ["Fusos horários","Placas tectônicas","Tipos de solo","Correntes oceânicas"],0,
-  "Greenwich é referência para longitude e fusos.","Fonte: Geografia geral."
-);
-
-addQ("GEO13","Brasil","Qual destas capitais está na Região Norte?",
-  ["Manaus","Salvador","Curitiba","Goiânia"],0,
-  "Manaus (AM) é capital na Região Norte.","Fonte: Divisão regional do Brasil."
-);
-
-addQ("GEO14","Brasil","Qual destas capitais está na Região Nordeste?",
-  ["Fortaleza","Porto Alegre","Cuiabá","Florianópolis"],0,
-  "Fortaleza (CE) é capital nordestina.","Fonte: Divisão regional do Brasil."
-);
-
-addQ("GEO15","Brasil","Qual destas capitais está na Região Sul?",
-  ["Teresina","Florianópolis","Belém","Recife"],1,
-  "Florianópolis (SC) é capital da Região Sul.","Fonte: Divisão regional do Brasil."
-);
-
-addQ("GEO16","Brasil","Qual destas capitais está na Região Sudeste?",
-  ["Vitória","Aracaju","Manaus","Campo Grande"],0,
-  "Vitória (ES) é capital do Sudeste.","Fonte: Divisão regional do Brasil."
-);
-
-addQ("GEO17","Brasil","Qual destas capitais está na Região Centro-Oeste?",
-  ["Campo Grande","Salvador","Rio Branco","João Pessoa"],0,
-  "Campo Grande (MS) é capital do Centro-Oeste.","Fonte: Divisão regional do Brasil."
-);
-
-addQ("GEO18","Relevo","A palavra “planície” sugere mais:",
-  ["Área baixa e relativamente plana","Área muito montanhosa","Área vulcânica ativa","Área de gelo permanente"],0,
-  "Planície tende a ser baixa e plana (em geral).","Fonte: Conceitos de geomorfologia."
-);
-
-addQ("GEO19","Hidrografia","“Afluente” é:",
-  ["Rio que deságua em outro","Rio que nasce no mar","Lago salgado","Canal artificial sempre"],0,
-  "Afluente é um rio que entra em outro.","Fonte: Conceitos de hidrografia."
-);
-
-addQ("GEO20","Cartografia","Qual alternativa é uma escala cartográfica?",
-  ["1:50.000","50 km/h","50 °C","50 mg/L"],0,
-  "Escala é uma razão do tipo 1:n.","Fonte: Cartografia básica."
-);
-addQ("AGX01","Agro & Pecuária","Qual alternativa é um grão/cereal?",
-  ["Milho","Cacau","Uva","Caju"],0,
-  "Milho é cereal.","Fonte: Conceitos de agro."
-);
-
-addQ("AGX02","Agro & Pecuária","Qual alternativa é uma oleaginosa?",
-  ["Soja","Trigo","Arroz","Aveia"],0,
-  "Soja é oleaginosa.","Fonte: Conceitos de agro."
-);
-
-addQ("AGX03","Agro & Pecuária","Qual alternativa é mais ligada à pecuária leiteira?",
-  ["Ordenha","Colheita","Poda","Irrigação"],0,
-  "Ordenha está diretamente ligada à produção de leite.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGX04","Agro & Pecuária","Qual alternativa é mais ligada à pecuária de corte?",
-  ["Abate","Fermentação","Germinação","Enxertia"],0,
-  "Abate é etapa típica da cadeia de carne bovina.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGX05","Agro & Pecuária","Qual alternativa NÃO é um produto típico do agronegócio brasileiro?",
-  ["Soja","Café","Borracha","Salmão"],3,
-  "Salmão é mais associado a países frios; no Brasil não é típico.","Fonte: Conceitos gerais de produção."
-);
-
-addQ("AGX06","Agro & Pecuária","Qual alternativa está INCORRETA?",
-  ["Soja gera óleo e farelo","Milho é cereal","Algodão é fibra","Cana é leguminosa"],3,
-  "Cana-de-açúcar não é leguminosa.","Fonte: Botânica/agro (conceitos)."
-);
-
-addQ("AGX07","Agro & Pecuária","Qual alternativa é uma prática de conservação do solo?",
-  ["Plantio direto","Solo exposto","Queima anual","Retirar cobertura"],0,
-  "Plantio direto ajuda a manter cobertura e reduzir erosão.","Fonte: Boas práticas agrícolas."
-);
-
-addQ("AGX08","Agro & Pecuária","Qual alternativa é um sistema de produção animal?",
-  ["Confinamento","Hidroponia","Silvicultura","Mineradora"],0,
-  "Confinamento é sistema de engorda animal.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGX09","Agro & Pecuária","Qual alternativa é uma cultura perene (em geral)?",
-  ["Café","Milho","Arroz","Soja"],0,
-  "Café é perene; milho/arroz/soja são anuais.","Fonte: Conceitos de culturas."
-);
-
-addQ("AGX10","Agro & Pecuária","Qual alternativa NÃO é uma forma comum de medir produção de leite?",
-  ["Litros","Toneladas","Cabeças","Volume"],2,
-  "“Cabeças” mede efetivo animal, não volume de leite.","Fonte: Conceitos de estatísticas agropecuárias."
-);
-addQ("AGX01","Agro & Pecuária","Qual alternativa é um grão/cereal?",
-  ["Milho","Cacau","Uva","Caju"],0,
-  "Milho é cereal.","Fonte: Conceitos de agro."
-);
-
-addQ("AGX02","Agro & Pecuária","Qual alternativa é uma oleaginosa?",
-  ["Soja","Trigo","Arroz","Aveia"],0,
-  "Soja é oleaginosa.","Fonte: Conceitos de agro."
-);
-
-addQ("AGX03","Agro & Pecuária","Qual alternativa é mais ligada à pecuária leiteira?",
-  ["Ordenha","Colheita","Poda","Irrigação"],0,
-  "Ordenha está diretamente ligada à produção de leite.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGX04","Agro & Pecuária","Qual alternativa é mais ligada à pecuária de corte?",
-  ["Abate","Fermentação","Germinação","Enxertia"],0,
-  "Abate é etapa típica da cadeia de carne bovina.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGX05","Agro & Pecuária","Qual alternativa NÃO é um produto típico do agronegócio brasileiro?",
-  ["Soja","Café","Borracha","Salmão"],3,
-  "Salmão é mais associado a países frios; no Brasil não é típico.","Fonte: Conceitos gerais de produção."
-);
-
-addQ("AGX06","Agro & Pecuária","Qual alternativa está INCORRETA?",
-  ["Soja gera óleo e farelo","Milho é cereal","Algodão é fibra","Cana é leguminosa"],3,
-  "Cana-de-açúcar não é leguminosa.","Fonte: Botânica/agro (conceitos)."
-);
-
-addQ("AGX07","Agro & Pecuária","Qual alternativa é uma prática de conservação do solo?",
-  ["Plantio direto","Solo exposto","Queima anual","Retirar cobertura"],0,
-  "Plantio direto ajuda a manter cobertura e reduzir erosão.","Fonte: Boas práticas agrícolas."
-);
-
-addQ("AGX08","Agro & Pecuária","Qual alternativa é um sistema de produção animal?",
-  ["Confinamento","Hidroponia","Silvicultura","Mineradora"],0,
-  "Confinamento é sistema de engorda animal.","Fonte: Conceitos de pecuária."
-);
-
-addQ("AGX09","Agro & Pecuária","Qual alternativa é uma cultura perene (em geral)?",
-  ["Café","Milho","Arroz","Soja"],0,
-  "Café é perene; milho/arroz/soja são anuais.","Fonte: Conceitos de culturas."
-);
-
-addQ("AGX10","Agro & Pecuária","Qual alternativa NÃO é uma forma comum de medir produção de leite?",
-  ["Litros","Toneladas","Cabeças","Volume"],2,
-  "“Cabeças” mede efetivo animal, não volume de leite.","Fonte: Conceitos de estatísticas agropecuárias."
-);
-
-    // Exemplo:
-    // addQ("pib1","PIB por UF","Qual UF tem o maior PIB? ", ["SP","RJ","MG","PR"], 0, "Exp...", "Fonte...");
-
-    ui.kBank.textContent = String(bank.length);
-
-    // ===== quiz runtime =====
-    let deck = [];
-    let idx = -1;
-    let answered = false;
-    let score = 0;
-    let streak = 0;
-
-    // timer simples (só exibe; se quiser cronometrado de verdade depois, a gente liga)
-    function updateLabels(){
-      ui.nLabel.textContent = ui.selN.value;
-      const t = Number(ui.selT.value);
-      ui.tLabel.textContent = (t === 0) ? "Sem limite" : `${Math.round(t/60)} min`;
-      ui.hint.textContent = ui.chkTrain.checked ? "Modo treino: feedback imediato." : "Modo prova: feedback após responder.";
-      ui.qTimer.textContent = (t === 0) ? "⏳ Sem limite" : "⏳ " + ui.tLabel.textContent;
-    }
-    ui.selN.addEventListener("change", updateLabels);
-    ui.selT.addEventListener("change", updateLabels);
-    ui.chkTrain.addEventListener("change", updateLabels);
-    updateLabels();
-
-    function render(){
-      const total = deck.length;
-
-      if(idx < 0 || idx >= total){
-        ui.qProg.textContent = "0/0";
-        ui.qCat.textContent = "Categoria: —";
-        ui.barFill.style.width = "0%";
-        ui.qText.innerHTML = 'Clique em <b>Começar</b> para iniciar 🙂';
-        ui.ansWrap.style.opacity = ".7";
-        ui.ansWrap.style.pointerEvents = "none";
-        ui.fb.classList.remove("show");
-        ui.fb.innerHTML = "";
-        ui.btnExplain.disabled = true;
-        ui.btnNext.disabled = true;
-        return;
-      }
-
-      const q = deck[idx];
-      ui.qProg.textContent = (idx+1) + "/" + total;
-      ui.qCat.textContent = "Categoria: " + q.cat;
-      ui.barFill.style.width = ((idx+1)/total*100).toFixed(1) + "%";
-      ui.qText.textContent = q.q;
-
-      ui.ansWrap.innerHTML = "";
-      q.a.forEach((txt, i) => {
-        const el = document.createElement("div");
-        el.className = "ans";
-        el.innerHTML = `<div class="key">${i+1}</div><div class="txt">${escapeHtml(txt)}</div>`;
-        el.addEventListener("click", () => choose(i));
-        ui.ansWrap.appendChild(el);
-      });
-
-      ui.ansWrap.style.opacity = "1";
-      ui.ansWrap.style.pointerEvents = "auto";
-      ui.fb.classList.remove("show");
-      ui.fb.innerHTML = "";
-      answered = false;
-      ui.btnExplain.disabled = true;
-      ui.btnNext.disabled = true;
-    }
-
-    function showFeedback(isCorrect){
-      const q = deck[idx];
-      const tag = isCorrect
-        ? `<span class="tag" style="border-color:rgba(52,211,153,.65)">✅ Acertou</span>`
-        : `<span class="tag" style="border-color:rgba(251,113,133,.70)">❌ Errou</span>`;
-
-      ui.fb.innerHTML = `
-        ${tag}
-        <b>Resposta:</b> ${escapeHtml(q.a[q.correct])}<br>
-        <b>Explicação:</b> ${escapeHtml(q.exp)}<br>
-        <span class="small"><b>Fonte:</b> ${escapeHtml(q.src)}</span>
-      `;
-      ui.fb.classList.add("show");
-    }
-
-    function choose(i){
-      if(idx < 0 || idx >= deck.length){ toast("Clique em Começar 🙂"); return; }
-      if(answered){ toast("Já respondeu. Enter → próxima."); return; }
-
-      const q = deck[idx];
-      answered = true;
-
-      const isCorrect = (i === q.correct);
-      if(isCorrect){ score++; streak++; } else { streak = 0; }
-
-      const items = Array.from(ui.ansWrap.querySelectorAll(".ans"));
-      items.forEach((el, k) => {
-        if(k === q.correct) el.classList.add("good");
-        else if(k === i) el.classList.add("bad");
-      });
-
-      ui.btnNext.disabled = false;
-      ui.btnExplain.disabled = false;
-
-      if(ui.chkTrain.checked) showFeedback(isCorrect);
-      else showFeedback(isCorrect); // mantém simples (você pediu explicar sempre)
-    }
-
-    function finish(){
-      const total = deck.length || 1;
-      const pct = Math.round(score/total*100);
-
-      const p = ensureProfile(activeName);
-      p.lastScore = score; p.lastTotal = deck.length;
-      if(score > p.best) p.best = score;
-      if(streak > p.streakBest) p.streakBest = streak;
-      saveProfiles(profiles);
-
-      refreshPlayerUI();
-
-      ui.qText.innerHTML = `🎉 Fim! Você fez <b>${score}/${deck.length}</b> (${pct}%).`;
-      ui.qCat.textContent = "Categoria: Resultado";
-      ui.qProg.textContent = `${deck.length}/${deck.length}`;
-      ui.barFill.style.width = "100%";
-      ui.ansWrap.style.pointerEvents = "none";
-      ui.btnNext.disabled = true;
-      ui.btnExplain.disabled = true;
-
-      ui.fb.innerHTML = `
-        <span class="tag">📌 Resumo</span>
-        <b>Pontuação:</b> ${score}/${deck.length} (${pct}%)<br>
-        <b>Melhor (histórico):</b> ${ensureProfile(activeName).best}<br>
-        <b>Melhor sequência:</b> ${ensureProfile(activeName).streakBest}<br>
-        <span class="small">Dica: troque o nome para perfis diferentes e clique em “Começar / Reiniciar”.</span>
-      `;
-      ui.fb.classList.add("show");
-    }
-
-    function next(){
-      if(idx < 0 || idx >= deck.length){ toast("Clique em Começar 🙂"); return; }
-      if(!answered){ toast("Responda antes de avançar 🙂"); return; }
-      if(idx === deck.length - 1) { finish(); return; }
-      idx++;
-      render();
-    }
-
-    function buildDeck(){
-      // se tiver nome digitado, já salva (pra não ficar Visitante)
-      if ((ui.playerName.value || "").trim()) setPlayer(ui.playerName.value);
-
-      if(bank.length === 0){ toast("Banco vazio 🙃"); return; }
-
-      const N = clamp(parseInt(ui.selN.value,10) || 10, 1, bank.length);
-      const shuffleQ = ui.chkShuffleQ.checked;
-      const shuffleA = ui.chkShuffleA.checked;
-
-      let chosen = shuffleQ ? pickN(bank, N) : bank.slice(0, N);
-
-      chosen = chosen.map(q => {
-        const qq = { ...q, a: q.a.slice(), correct: q.correct };
-        if(shuffleA){
-          const zipped = qq.a.map((txt, i) => ({ txt, i }));
-          shuffle(zipped);
-          qq.a = zipped.map(z => z.txt);
-          qq.correct = zipped.findIndex(z => z.i === q.correct);
-        }
-        return qq;
-      });
-
-      deck = chosen;
-      idx = 0;
-      answered = false;
-      score = 0;
-      streak = 0;
-
-      toast("Valendo! 😄");
-      render();
-    }
-
-    function resetRound(){
-      deck = [];
-      idx = -1;
-      answered = false;
-      score = 0;
-      streak = 0;
-      render();
-      toast("Rodada resetada 🙂");
-    }
-
-    ui.btnStart.addEventListener("click", buildDeck);
-    ui.btnReset.addEventListener("click", resetRound);
-    ui.btnNext.addEventListener("click", next);
-    ui.btnExplain.addEventListener("click", () => {
-      if(!answered) toast("Responda primeiro 🙂");
-      else ui.fb.scrollIntoView({behavior:"smooth", block:"nearest"});
-    });
-
-    // teclas (SEM toLowerCase pra não quebrar)
-    window.addEventListener("keydown", (ev) => {
-      if(ev.key === "1") choose(0);
-      if(ev.key === "2") choose(1);
-      if(ev.key === "3") choose(2);
-      if(ev.key === "4") choose(3);
-      if(ev.key === "Enter") next();
-      if(ev.key === "r" || ev.key === "R") buildDeck();
-    });
-
-    // init
-    ui.playerName.value = (activeName === "Visitante") ? "" : activeName;
-    refreshPlayerUI();
-    render();
-
-    console.log("GeoAgro Quiz BR pronto. Bank =", bank.length);
-  })();
-  </script>
+<div class="top"><a class="hub" href="https://ernandes-sobreira.github.io/jogos-ambientais/">&larr; Todos os jogos</a></div>
+<header>
+  <h1>🇧🇷 GeoAgro Quiz BR</h1>
+  <p class="sub">Geografia, agro, pecuária, população e indicadores do Brasil, com dados oficiais de 2023 e 2024.</p>
+</header>
+<div class="hud">
+  <span>Pontos <b id="hPts">0</b></span>
+  <span>Nível <b id="hLv">–</b></span>
+  <span>Acertos <b id="hAc">0/0</b></span>
+  <span>Sequência <b id="hSeq">0</b></span>
+</div>
+<main class="card">
+  <section id="scMenu">
+    <h2 style="color:var(--dark);margin-bottom:6px">Escolha o nível</h2>
+    <p class="small" style="margin-bottom:12px">Cada rodada tem 10 perguntas e 25 segundos por pergunta. Acerte pelo menos 7 para liberar o próximo nível.</p>
+    <div class="levels" id="levels"></div>
+    <div class="info"><b>Pontos:</b> acerto vale 10, 20 ou 30 pontos conforme o nível, com bônus por rapidez e por sequência.<br><b>Erros tiram pontos:</b> resposta errada ou tempo esgotado tira 10, 15 ou 20 pontos.</div>
+  </section>
+  <section id="scQuiz" hidden>
+    <div class="meta"><span class="cat" id="qCat">–</span><span id="qN">1/10</span><span>Meta: <b id="qMeta">7</b> acertos</span></div>
+    <div class="bar"><i id="pBar" style="width:0"></i></div>
+    <div class="timer"><i id="tBar" style="width:100%"></i></div>
+    <div class="q" id="qTxt"></div>
+    <div class="opts" id="opts"></div>
+    <div class="exp" id="exp" hidden></div>
+    <div class="row"><button class="btn" id="bNext" hidden>Próxima</button></div>
+  </section>
+  <section id="scEnd" hidden class="center"></section>
+</main>
+<div class="ranking">
+  <h3>Ranking Global</h3>
+  <ol id="rankList"><li><span>Carregando o ranking...</span></li></ol>
+  <p class="note" id="rankNote"></p>
+</div>
+<footer>
+  Fontes principais: IBGE (Contas Regionais 2023, Estimativas da População 2024, PAM 2024, PPM 2024, Censo 2022), PNUD/Atlas Brasil (IDHM 2010) e Anuário Brasileiro de Segurança Pública 2024 (dados de 2023). Cada pergunta mostra a sua fonte.<br>
+  <span class="credit">Idealizado por Ernandes Sobreira</span>
+</footer>
+<script>
+const BANK=[{"cat": "PIB por UF", "q": "Qual unidade da federação tem o MAIOR PIB (2023)?", "a": ["São Paulo", "Rio de Janeiro", "Minas Gerais", "Paraná"], "correct": 0, "exp": "Em 2023, São Paulo lidera o PIB entre as UFs (R$ 3.444.814 milhões).", "src": "Fonte: IBGE — “Produto Interno Bruto - PIB”, tabela por UF (PIB 2023).", "lv": 3}, {"cat": "PIB por UF", "q": "Qual unidade da federação tem o MENOR PIB (2023)?", "a": ["Roraima", "Acre", "Amapá", "Tocantins"], "correct": 0, "exp": "Na tabela do IBGE para 2023, Roraima aparece com o menor PIB (R$ 25.125 milhões).", "src": "Fonte: IBGE — “Produto Interno Bruto - PIB”, tabela por UF (PIB 2023).", "lv": 3}, {"cat": "PIB por UF", "q": "Qual UF tem PIB ~R$ 1,17 trilhão (2023)?", "a": ["Rio de Janeiro", "Bahia", "Distrito Federal", "Santa Catarina"], "correct": 0, "exp": "O IBGE registra o PIB do RJ em 2023 como R$ 1.172.871 milhões (≈R$ 1,17 tri).", "src": "Fonte: IBGE — tabela por UF (PIB 2023).", "lv": 3}, {"cat": "PIB por UF", "q": "Qual UF tem PIB ~R$ 971,9 bilhões (2023)?", "a": ["Minas Gerais", "Rio Grande do Sul", "Goiás", "Pará"], "correct": 0, "exp": "Minas Gerais aparece com R$ 971.978 milhões na tabela do IBGE (2023).", "src": "Fonte: IBGE — tabela por UF (PIB 2023).", "lv": 3}, {"cat": "PIB por UF", "q": "Qual dessas UFs tem PIB acima de R$ 500 bilhões (2023)?", "a": ["Santa Catarina", "Mato Grosso do Sul", "Pernambuco", "Pará"], "correct": 0, "exp": "Em 2023, Santa Catarina registra R$ 513.393 milhões (acima de R$ 500 bi).", "src": "Fonte: IBGE — tabela por UF (PIB 2023).", "lv": 3}, {"cat": "População", "q": "Qual estado tem a MAIOR população estimada em 1º/07/2024?", "a": ["São Paulo", "Minas Gerais", "Rio de Janeiro", "Bahia"], "correct": 0, "exp": "SP lidera com 45.973.194 habitantes (estimativa IBGE 2024).", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "População", "q": "Qual estado tem a MENOR população estimada em 1º/07/2024?", "a": ["Roraima", "Acre", "Amapá", "Tocantins"], "correct": 0, "exp": "Roraima aparece com 716.793 habitantes (estimativa IBGE 2024).", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "População", "q": "Qual a população estimada do Brasil em 1º/07/2024 (IBGE)?", "a": ["212.583.750", "203.100.000", "220.400.000", "197.800.000"], "correct": 0, "exp": "O IBGE divulgou 212.583.750 habitantes para o Brasil na data de referência 1º/07/2024.", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "População", "q": "Qual estado tem ~3,84 milhões de habitantes (estimativa 1º/07/2024)?", "a": ["Mato Grosso", "Distrito Federal", "Amazonas", "Espírito Santo"], "correct": 0, "exp": "Mato Grosso aparece com 3.836.399 habitantes na estimativa de 2024.", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "População", "q": "Qual estado tem ~2,98 milhões de habitantes (estimativa 1º/07/2024)?", "a": ["Distrito Federal", "Mato Grosso do Sul", "Sergipe", "Rio Grande do Norte"], "correct": 0, "exp": "Distrito Federal aparece com 2.982.818 habitantes na estimativa de 2024.", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "IDH (IDHM)", "q": "Qual UF tem o MAIOR IDHM (2010)?", "a": ["Distrito Federal", "São Paulo", "Santa Catarina", "Rio de Janeiro"], "correct": 0, "exp": "No ranking de 2010, o Distrito Federal é 1º com IDHM 0,824.", "src": "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010.", "lv": 3}, {"cat": "IDH (IDHM)", "q": "Qual UF tem o MENOR IDHM (2010)?", "a": ["Maranhão", "Alagoas", "Piauí", "Pará"], "correct": 0, "exp": "No ranking de 2010, o Maranhão aparece na última posição (IDHM 0,639).", "src": "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010.", "lv": 3}, {"cat": "IDH (IDHM)", "q": "No IDHM 2010, quem está em 2º lugar?", "a": ["São Paulo", "Santa Catarina", "Goiás", "Minas Gerais"], "correct": 0, "exp": "O ranking de UFs 2010 coloca São Paulo em 2º (IDHM 0,783).", "src": "Fonte: PNUD/Atlas Brasil — Ranking IDHM UFs 2010.", "lv": 3}, {"cat": "Agro (PAM/IBGE)", "q": "Qual estado foi o maior produtor de soja (2024)?", "a": ["Mato Grosso", "Paraná", "Rio Grande do Sul", "Goiás"], "correct": 0, "exp": "Em 2024, Mato Grosso segue como maior produtor nacional de soja (38,4 milhões t).", "src": "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias).", "lv": 3}, {"cat": "Agro (PAM/IBGE)", "q": "A produção de soja do MT em 2024 foi, aproximadamente:", "a": ["38,4 milhões de toneladas", "18,4 milhões de toneladas", "8,4 milhões de toneladas", "68,4 milhões de toneladas"], "correct": 0, "exp": "O IBGE reporta 38,4 milhões de toneladas para o MT em 2024.", "src": "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias).", "lv": 3}, {"cat": "Agro (PAM/IBGE)", "q": "Segundo a PAM 2024, MT respondeu por cerca de quanto da produção nacional de milho?", "a": ["41,2%", "12,4%", "25,0%", "60,0%"], "correct": 0, "exp": "O IBGE indica que MT ainda responde por 41,2% da produção nacional de milho em 2024.", "src": "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias).", "lv": 3}, {"cat": "Agro (PAM/IBGE)", "q": "Em 2024, qual município teve o maior volume de milho produzido no Brasil (segundo o IBGE)?", "a": ["Sorriso (MT)", "Luís Eduardo Magalhães (BA)", "Rio Verde (GO)", "Cascavel (PR)"], "correct": 0, "exp": "A PAM 2024 cita Sorriso (MT) novamente como o maior volume de milho produzido (3,7 milhões t).", "src": "Fonte: IBGE — PAM 2024 (Agência IBGE Notícias).", "lv": 3}, {"cat": "Agro (PAM/IBGE)", "q": "Estimativa (preço implícito): se MT gerou R$ 63,8 bi com 38,4 mi t de soja, o preço médio implícito fica mais perto de:", "a": ["R$ 1.660 por tonelada", "R$ 660 por tonelada", "R$ 3.600 por tonelada", "R$ 9.800 por tonelada"], "correct": 0, "exp": "Cálculo: 63,8 bi / 38,4 mi ≈ 1.661 R$/t (aproximação).", "src": "Fonte: IBGE — PAM 2024 (valor e quantidade de soja do MT no texto da Agência IBGE Notícias).", "lv": 3}, {"cat": "Pecuária (PPM/IBGE)", "q": "Qual estado teve o maior rebanho bovino em 2024 (PPM/IBGE)?", "a": ["Mato Grosso", "Pará", "Goiás", "Minas Gerais"], "correct": 0, "exp": "O PDF da PPM 2024 mostra MT com ~32,9 milhões de cabeças (13,8% do total).", "src": "Fonte: IBGE — PPM 2024 (PDF resumo).", "lv": 3}, {"cat": "Pecuária (PPM/IBGE)", "q": "O efetivo bovino do Brasil em 2024 foi aproximadamente:", "a": ["238,2 milhões", "212,6 milhões", "180,0 milhões", "300,0 milhões"], "correct": 0, "exp": "A PPM 2024 registra 238,2 milhões de bovinos no Brasil (31/12/2024).", "src": "Fonte: IBGE — PPM 2024 (PDF resumo).", "lv": 3}, {"cat": "Pecuária (PPM/IBGE)", "q": "Qual foi o preço médio nacional do leite em 2024 (PPM/IBGE)?", "a": ["R$ 2,45 por litro", "R$ 1,45 por litro", "R$ 3,45 por litro", "R$ 4,10 por litro"], "correct": 0, "exp": "O PDF da PPM 2024 indica preço médio nacional do leite de R$ 2,45/L em 2024.", "src": "Fonte: IBGE — PPM 2024 (PDF resumo).", "lv": 3}, {"cat": "Pecuária (PPM/IBGE)", "q": "Qual estado liderou a produção de leite em 2024 (PPM/IBGE)?", "a": ["Minas Gerais", "Paraná", "Rio Grande do Sul", "Santa Catarina"], "correct": 0, "exp": "A PPM 2024 mostra Minas Gerais com ~9,8 bilhões de litros (27,4%).", "src": "Fonte: IBGE — PPM 2024 (PDF resumo).", "lv": 3}, {"cat": "Pecuária (PPM/IBGE)", "q": "Qual destes está entre os 3 maiores produtores de leite em 2024 (PPM/IBGE)?", "a": ["Paraná", "Bahia", "Amapá", "Distrito Federal"], "correct": 0, "exp": "No resumo PPM 2024: MG (1º), PR (2º), RS (3º).", "src": "Fonte: IBGE — PPM 2024 (PDF resumo).", "lv": 3}, {"cat": "Arborização (Censo/IBGE)", "q": "Entre estes municípios com >100 mil hab., qual teve o maior percentual de moradores em vias com arborização?", "a": ["Maringá (PR)", "Curitiba (PR)", "Florianópolis (SC)", "Campinas (SP)"], "correct": 0, "exp": "Maringá (PR) registrou 98,6% dos moradores em vias arborizadas, entre os mais altos do país.", "src": "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno).", "lv": 3}, {"cat": "Arborização (Censo/IBGE)", "q": "Entre municípios com >100 mil hab., qual teve o MENOR percentual de moradores em vias com arborização?", "a": ["São José (SC)", "Maringá (PR)", "Campo Grande (MS)", "Vitória (ES)"], "correct": 0, "exp": "O IBGE destacou São José (SC) como o menor (15,1%) entre municípios >100 mil hab.", "src": "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno).", "lv": 3}, {"cat": "Arborização (Censo/IBGE)", "q": "Entre as capitais, qual se destacou com alta arborização (91,4%)?", "a": ["Campo Grande (MS)", "Florianópolis (SC)", "Manaus (AM)", "Porto Velho (RO)"], "correct": 0, "exp": "O IBGE destacou Campo Grande (MS) com 91,4% (capitais).", "src": "Fonte: IBGE — Censo 2022 (características urbanísticas do entorno).", "lv": 3}, {"cat": "Violência (Anuário)", "q": "No Anuário Brasileiro de Segurança Pública (dados de 2023), qual cidade teve a maior taxa de mortes violentas (92,9 por 100 mil)?", "a": ["Santana (AP)", "Camaçari (BA)", "Jequié (BA)", "Sorriso (MT)"], "correct": 0, "exp": "Na lista, Santana (AP) aparece em 1º com taxa 92,9 por 100 mil.", "src": "Fonte: 18º Anuário Brasileiro de Segurança Pública (FBSP, 2024), dados de 2023.", "lv": 3}, {"cat": "Violência (Anuário)", "q": "Qual dessas cidades (da lista) fica em Mato Grosso?", "a": ["Sorriso", "Jequié", "Santana", "Eunápolis"], "correct": 0, "exp": "A lista inclui Sorriso (MT) entre as 10 cidades com maiores taxas.", "src": "Fonte: 18º Anuário Brasileiro de Segurança Pública (FBSP, 2024), dados de 2023.", "lv": 3}, {"cat": "Violência (Anuário)", "q": "Qual estado tinha mais municípios entre as 10 cidades mais violentas (Anuário, dados de 2023)?", "a": ["Bahia", "São Paulo", "Paraná", "Santa Catarina"], "correct": 0, "exp": "A Bahia tinha 6 dos 10 municípios da lista.", "src": "Fonte: 18º Anuário Brasileiro de Segurança Pública (FBSP, 2024), dados de 2023.", "lv": 3}, {"cat": "Capitais", "q": "Qual é a capital do Amapá?", "a": ["Macapá", "Belém", "Boa Vista", "Rio Branco"], "correct": 0, "exp": "A capital do Amapá é Macapá.", "src": "Fonte: Conhecimento geral (geografia política do Brasil).", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital de Mato Grosso?", "a": ["Cuiabá", "Campo Grande", "Goiânia", "Palmas"], "correct": 0, "exp": "A capital de Mato Grosso é Cuiabá.", "src": "Fonte: Conhecimento geral (geografia política do Brasil).", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital de Roraima?", "a": ["Boa Vista", "Macapá", "Porto Velho", "Manaus"], "correct": 0, "exp": "A capital de Roraima é Boa Vista.", "src": "Fonte: Conhecimento geral (geografia política do Brasil).", "lv": 1}, {"cat": "Extremos", "q": "Qual é o MAIOR estado do Brasil em área (IBGE Cidades@ 2024)?", "a": ["Amazonas", "Pará", "Mato Grosso", "Minas Gerais"], "correct": 0, "exp": "O IBGE registra o Amazonas como o maior em área (1.558.706,127 km² em 2024).", "src": "Fonte: IBGE — Cidades e Estados (AM, área territorial 2024).", "lv": 1}, {"cat": "Extremos", "q": "Qual é o MENOR estado do Brasil em área (desconsiderando o DF)?", "a": ["Sergipe", "Alagoas", "Rio de Janeiro", "Espírito Santo"], "correct": 0, "exp": "Sergipe é o menor estado brasileiro em área (IBGE Cidades@ mostra ~21.938 km² em 2024).", "src": "Fonte: IBGE — Cidades e Estados (SE, área territorial 2024).", "lv": 1}, {"cat": "Cidades", "q": "Qual é o município menos populoso do Brasil (Censo 2022)?", "a": ["Serra da Saudade (MG)", "Borá (SP)", "Águas de São Pedro (SP)", "Anhanguera (GO)"], "correct": 0, "exp": "O IBGE aponta Serra da Saudade (MG) como a menos populosa (833 hab. no Censo 2022).", "src": "Fonte: IBGE Educa (município menos populoso; Censo 2022).", "lv": 1}, {"cat": "Brasil em números", "q": "Qual região tem a MAIOR população estimada (1º/07/2024)?", "a": ["Sudeste", "Nordeste", "Sul", "Norte"], "correct": 0, "exp": "A estimativa 2024 soma ~88,6 milhões no Sudeste (maior entre regiões).", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "Brasil em números", "q": "Qual região tem a MENOR população estimada (1º/07/2024)?", "a": ["Norte", "Centro-Oeste", "Sul", "Nordeste"], "correct": 0, "exp": "A estimativa 2024 indica ~18,7 milhões no Norte (menor entre regiões).", "src": "Fonte: IBGE — Estimativas da População (ref. 1º jul 2024).", "lv": 3}, {"cat": "Agro & Pecuária", "q": "Qual combinação está correta (lideranças 2024)?", "a": ["Soja: MT · Rebanho: MT · Leite: MG", "Soja: PR · Rebanho: SP · Leite: RJ", "Soja: RS · Rebanho: GO · Leite: SC", "Soja: GO · Rebanho: PA · Leite: BA"], "correct": 0, "exp": "PAM 2024 (soja MT), PPM 2024 (rebanho MT), PPM 2024 (leite MG).", "src": "Fontes: IBGE — PAM 2024; IBGE — PPM 2024 (PDF resumo).", "lv": 3}, {"cat": "PIB por UF", "q": "Qual destes estados tem PIB > R$ 600 bi (2023)?", "a": ["Paraná", "Pernambuco", "Pará", "Mato Grosso"], "correct": 0, "exp": "Paraná registra ~R$ 670,9 bi em 2023; os outros ficam abaixo disso.", "src": "Fonte: IBGE — tabela PIB por UF (PIB 2023).", "lv": 3}, {"cat": "PIB por UF", "q": "Qual destes estados tem PIB por volta de R$ 430,9 bi (2023)?", "a": ["Bahia", "Ceará", "Distrito Federal", "Goiás"], "correct": 0, "exp": "Bahia aparece com R$ 430.988 milhões (2023).", "src": "Fonte: IBGE — tabela PIB por UF (PIB 2023).", "lv": 3}, {"cat": "Agro (MT)", "q": "Qual é a principal produção agrícola do Mato Grosso (séries recentes)?", "a": ["Soja", "Uva", "Cacau", "Maçã"], "correct": 0, "exp": "Mato Grosso é líder nacional em soja em séries recentes.", "src": "Fonte: IBGE — PAM (séries recentes).", "lv": 2}, {"cat": "Capitais", "q": "Qual é a capital de Rondônia?", "a": ["Porto Velho", "Rio Branco", "Boa Vista", "Macapá"], "correct": 0, "exp": "A capital de Rondônia é Porto Velho.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital do Pará?", "a": ["Belém", "Manaus", "Macapá", "São Luís"], "correct": 0, "exp": "A capital do Pará é Belém.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital do Tocantins?", "a": ["Palmas", "Goiânia", "Cuiabá", "Teresina"], "correct": 0, "exp": "A capital do Tocantins é Palmas.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital do Maranhão?", "a": ["São Luís", "Teresina", "Fortaleza", "Belém"], "correct": 0, "exp": "A capital do Maranhão é São Luís.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital do Piauí?", "a": ["Teresina", "Natal", "Aracaju", "Maceió"], "correct": 0, "exp": "A capital do Piauí é Teresina.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital de Pernambuco?", "a": ["Recife", "Salvador", "Maceió", "João Pessoa"], "correct": 0, "exp": "A capital de Pernambuco é Recife.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital de Sergipe?", "a": ["Aracaju", "Maceió", "Salvador", "Recife"], "correct": 0, "exp": "A capital de Sergipe é Aracaju.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital do Espírito Santo?", "a": ["Vitória", "Belo Horizonte", "Rio de Janeiro", "Curitiba"], "correct": 0, "exp": "A capital do Espírito Santo é Vitória.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital de Goiás?", "a": ["Goiânia", "Brasília", "Cuiabá", "Campo Grande"], "correct": 0, "exp": "A capital de Goiás é Goiânia.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Capitais", "q": "Qual é a capital de Minas Gerais?", "a": ["Belo Horizonte", "Juiz de Fora", "Uberlândia", "Montes Claros"], "correct": 0, "exp": "A capital de Minas Gerais é Belo Horizonte.", "src": "Fonte: Geografia política do Brasil.", "lv": 1}, {"cat": "Regiões", "q": "Qual destes estados pertence à Região Norte?", "a": ["Acre", "Bahia", "Paraná", "Minas Gerais"], "correct": 0, "exp": "Acre faz parte da Região Norte.", "src": "Fonte: Divisão regional (IBGE).", "lv": 1}, {"cat": "Regiões", "q": "Qual destes estados pertence à Região Nordeste?", "a": ["Ceará", "Goiás", "Santa Catarina", "Mato Grosso"], "correct": 0, "exp": "Ceará faz parte da Região Nordeste.", "src": "Fonte: Divisão regional (IBGE).", "lv": 1}, {"cat": "Regiões", "q": "Qual destes estados pertence à Região Centro-Oeste?", "a": ["Mato Grosso do Sul", "Pernambuco", "Rio Grande do Sul", "Pará"], "correct": 0, "exp": "MS faz parte da Região Centro-Oeste.", "src": "Fonte: Divisão regional (IBGE).", "lv": 1}, {"cat": "Regiões", "q": "Qual destes estados pertence à Região Sudeste?", "a": ["Rio de Janeiro", "Maranhão", "Amazonas", "Rio Grande do Norte"], "correct": 0, "exp": "RJ faz parte da Região Sudeste.", "src": "Fonte: Divisão regional (IBGE).", "lv": 1}, {"cat": "Regiões", "q": "Qual destes estados pertence à Região Sul?", "a": ["Santa Catarina", "Piauí", "Mato Grosso do Sul", "Sergipe"], "correct": 0, "exp": "SC faz parte da Região Sul.", "src": "Fonte: Divisão regional (IBGE).", "lv": 1}, {"cat": "UF (siglas)", "q": "Qual é a sigla de Mato Grosso?", "a": ["MT", "MS", "MG", "TO"], "correct": 0, "exp": "A sigla de Mato Grosso é MT.", "src": "Fonte: Siglas oficiais das UFs.", "lv": 1}, {"cat": "UF (siglas)", "q": "Qual é a sigla do Paraná?", "a": ["PR", "PA", "PB", "PE"], "correct": 0, "exp": "A sigla do Paraná é PR.", "src": "Fonte: Siglas oficiais das UFs.", "lv": 1}, {"cat": "UF (siglas)", "q": "Qual é a sigla de Santa Catarina?", "a": ["SC", "SE", "SP", "RS"], "correct": 0, "exp": "A sigla de Santa Catarina é SC.", "src": "Fonte: Siglas oficiais das UFs.", "lv": 1}, {"cat": "UF (siglas)", "q": "Qual é a sigla do Rio Grande do Norte?", "a": ["RN", "RO", "RR", "RJ"], "correct": 0, "exp": "A sigla do Rio Grande do Norte é RN.", "src": "Fonte: Siglas oficiais das UFs.", "lv": 1}, {"cat": "UF (siglas)", "q": "Qual é a sigla do Distrito Federal?", "a": ["DF", "DR", "FD", "BD"], "correct": 0, "exp": "A sigla do Distrito Federal é DF.", "src": "Fonte: Siglas oficiais das UFs.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual rio é o principal eixo da Bacia Amazônica?", "a": ["Rio Amazonas", "Rio Paraná", "Rio São Francisco", "Rio Tocantins"], "correct": 0, "exp": "O Rio Amazonas é o principal eixo da bacia.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual rio é mais associado ao Pantanal no MS/MT?", "a": ["Rio Paraguai", "Rio Doce", "Rio Paraíba do Sul", "Rio Capibaribe"], "correct": 0, "exp": "O Rio Paraguai é a espinha dorsal do Pantanal.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual rio é o principal da Bacia do São Francisco?", "a": ["Rio São Francisco", "Rio Uruguai", "Rio Jequitinhonha", "Rio Xingu"], "correct": 0, "exp": "O Rio São Francisco dá nome à bacia.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual rio forma o famoso encontro das águas em Manaus?", "a": ["Rio Negro e Rio Solimões", "Rio Tapajós e Rio Xingu", "Rio Tocantins e Rio Araguaia", "Rio Paraná e Rio Tietê"], "correct": 0, "exp": "Em Manaus, Negro e Solimões se encontram.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Relevo", "q": "Como se chama a grande planície alagável do Centro-Oeste?", "a": ["Pantanal", "Pampas", "Caatinga", "Serra do Mar"], "correct": 0, "exp": "O Pantanal é uma vasta planície alagável.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Relevo", "q": "A Serra do Mar está mais associada a qual faixa do Brasil?", "a": ["Litoral do Sudeste/Sul", "Interior do Nordeste", "Centro-Oeste pantaneiro", "Extremo Norte amazônico"], "correct": 0, "exp": "A Serra do Mar acompanha parte do litoral Sudeste/Sul.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual destas bacias é mais ligada ao Sul do Brasil?", "a": ["Bacia do Uruguai", "Bacia do Tocantins-Araguaia", "Bacia Amazônica", "Bacia do Parnaíba"], "correct": 0, "exp": "A Bacia do Uruguai é típica do Sul.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual destes rios NÃO pertence à Região Norte?", "a": ["Rio Paraná", "Rio Madeira", "Rio Tapajós", "Rio Negro"], "correct": 0, "exp": "O Rio Paraná é mais associado ao Centro-Sul.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Relevo", "q": "Qual é um exemplo clássico de planalto no Brasil?", "a": ["Planalto Central", "Pantanal", "Planície Amazônica", "Delta do Parnaíba"], "correct": 0, "exp": "O Planalto Central é um exemplo clássico.", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Hidrografia", "q": "Qual bioma é muito associado ao rio São Francisco no interior?", "a": ["Caatinga", "Pampa", "Amazônia", "Pantanal"], "correct": 0, "exp": "O rio cruza áreas extensas do semiárido (Caatinga).", "src": "Fonte: Geografia física do Brasil.", "lv": 1}, {"cat": "Biomas", "q": "Qual bioma é dominante na Região Norte do Brasil?", "a": ["Amazônia", "Caatinga", "Pampa", "Mata Atlântica"], "correct": 0, "exp": "A Amazônia é o bioma mais associado à Região Norte.", "src": "Fonte: Biomas do Brasil.", "lv": 1}, {"cat": "Biomas", "q": "Qual bioma é mais associado ao semiárido do Nordeste?", "a": ["Caatinga", "Amazônia", "Pantanal", "Pampa"], "correct": 0, "exp": "A Caatinga é típica do semiárido.", "src": "Fonte: Biomas do Brasil.", "lv": 1}, {"cat": "Biomas", "q": "Qual bioma é mais associado ao Sul do Brasil?", "a": ["Pampa", "Caatinga", "Pantanal", "Amazônia"], "correct": 0, "exp": "O Pampa é típico do extremo sul.", "src": "Fonte: Biomas do Brasil.", "lv": 1}, {"cat": "Biomas", "q": "Qual bioma ocupa grande parte do Centro-Oeste e interior do Sudeste/Nordeste?", "a": ["Cerrado", "Pampa", "Caatinga", "Pantanal"], "correct": 0, "exp": "O Cerrado é um grande bioma do Brasil central.", "src": "Fonte: Biomas do Brasil.", "lv": 1}, {"cat": "Biomas", "q": "Qual bioma é mais associado ao litoral do Brasil?", "a": ["Mata Atlântica", "Pampa", "Floresta Amazônica", "Cerrado"], "correct": 0, "exp": "A Mata Atlântica acompanha a faixa litorânea.", "src": "Fonte: Biomas do Brasil.", "lv": 1}, {"cat": "Clima", "q": "Qual clima predomina na maior parte da Amazônia?", "a": ["Equatorial", "Semiárido", "Temperado", "Subtropical seco"], "correct": 0, "exp": "O clima equatorial é quente e úmido.", "src": "Fonte: Climas do Brasil.", "lv": 1}, {"cat": "Clima", "q": "Qual clima está mais associado ao Sertão do Nordeste?", "a": ["Semiárido", "Equatorial", "Temperado oceânico", "Alpino"], "correct": 0, "exp": "O semiárido tem chuvas escassas e irregulares.", "src": "Fonte: Climas do Brasil.", "lv": 1}, {"cat": "Clima", "q": "Qual clima é mais comum no Sul do Brasil?", "a": ["Subtropical", "Equatorial", "Semiárido", "Desértico"], "correct": 0, "exp": "O Sul tem maior presença de clima subtropical.", "src": "Fonte: Climas do Brasil.", "lv": 1}, {"cat": "Conceitos", "q": "O que é biodiversidade?", "a": ["Variedade de genes, espécies e ecossistemas", "Número total de árvores de uma floresta", "Quantidade de animais de grande porte", "Lista das espécies invasoras de uma área"], "correct": 0, "exp": "Biodiversidade envolve diferentes níveis de diversidade.", "src": "Fonte: Conceitos ecológicos.", "lv": 2}, {"cat": "Conceitos", "q": "O que significa 'bacia hidrográfica'?", "a": ["Área drenada por um rio e afluentes", "Um lago isolado sem ligação com rios", "Um aquífero subterrâneo sem saída", "Trecho de rio entre duas cachoeiras"], "correct": 0, "exp": "Bacia = área que drena para um sistema de rios.", "src": "Fonte: Conceitos de hidrologia.", "lv": 2}, {"cat": "Agro", "q": "Soja é classificada principalmente como:", "a": ["Oleaginosa", "Fruta cítrica", "Tubérculo", "Fibra têxtil"], "correct": 0, "exp": "Soja é uma oleaginosa (gera óleo e farelo).", "src": "Fonte: Conceitos de agro.", "lv": 2}, {"cat": "Agro", "q": "Milho é classificado principalmente como:", "a": ["Cereal", "Leguminosa", "Fruta", "Raiz"], "correct": 0, "exp": "Milho é um cereal.", "src": "Fonte: Conceitos de agro.", "lv": 2}, {"cat": "Agro", "q": "Algodão é mais associado à produção de:", "a": ["Fibra", "Leite", "Óleo comestível", "Açúcar"], "correct": 0, "exp": "Algodão é uma cultura fibrosa.", "src": "Fonte: Conceitos de agro.", "lv": 2}, {"cat": "Agro", "q": "Cana-de-açúcar é matéria-prima importante para:", "a": ["Açúcar e etanol", "Café e chocolate", "Farinha e pão", "Vinho e cerveja"], "correct": 0, "exp": "Cana é base para açúcar e etanol.", "src": "Fonte: Cadeias produtivas.", "lv": 2}, {"cat": "Pecuária", "q": "Qual item é um produto típico da pecuária leiteira?", "a": ["Leite", "Algodão", "Soja", "Cacau"], "correct": 0, "exp": "Leite é produto direto da pecuária leiteira.", "src": "Fonte: Conceitos de pecuária.", "lv": 2}, {"cat": "Pecuária", "q": "O termo 'rebanho bovino' se refere a:", "a": ["Conjunto de bois e vacas", "Conjunto de aves de granja", "Conjunto de peixes de açude", "Conjunto de cabras e ovelhas"], "correct": 0, "exp": "Bovinos = gado (bois e vacas).", "src": "Fonte: Conceitos de pecuária.", "lv": 2}, {"cat": "Agro", "q": "Qual dessas é uma leguminosa?", "a": ["Feijão", "Arroz", "Milho", "Trigo"], "correct": 0, "exp": "Feijão é leguminosa.", "src": "Fonte: Botânica/Agro.", "lv": 2}, {"cat": "Agro", "q": "Qual dessas é uma cultura típica de clima temperado/subtropical no Brasil?", "a": ["Trigo", "Cacau", "Açaí", "Caju"], "correct": 0, "exp": "Trigo é mais associado a climas mais frios no Brasil.", "src": "Fonte: Conceitos de agro/clima.", "lv": 2}, {"cat": "Agro", "q": "Qual é um exemplo de rotação de culturas (ideia geral)?", "a": ["Alternar culturas no mesmo talhão", "Plantar só uma cultura por muitos anos", "Queimar a palhada depois de cada colheita", "Deixar o solo sem nenhuma cobertura"], "correct": 0, "exp": "Rotação ajuda a reduzir pragas e melhorar o solo.", "src": "Fonte: Práticas agrícolas.", "lv": 2}, {"cat": "Indicadores", "q": "O que o IDH/IDHM tenta medir (ideia central)?", "a": ["Renda, educação e longevidade", "Apenas o PIB de cada estado", "Apenas a área territorial", "Apenas a população total"], "correct": 0, "exp": "IDH combina dimensões sociais e econômicas.", "src": "Fonte: Conceitos de indicadores.", "lv": 2}, {"cat": "Indicadores", "q": "PIB significa:", "a": ["Produto Interno Bruto", "Programa de Inclusão Básica", "Plano Integrado de Bacias", "Pesquisa de Índice Bruto"], "correct": 0, "exp": "PIB = Produto Interno Bruto.", "src": "Fonte: Conceitos de economia.", "lv": 2}, {"cat": "Indicadores", "q": "Qual destes é um exemplo de indicador demográfico?", "a": ["População", "Altitude", "Tipo de solo", "Profundidade do rio"], "correct": 0, "exp": "População é um indicador demográfico.", "src": "Fonte: Conceitos de demografia.", "lv": 2}, {"cat": "Cidadania", "q": "O que é uma capital estadual?", "a": ["Sede do governo do estado", "A maior cidade do estado sempre", "Um município rural", "Um distrito industrial"], "correct": 0, "exp": "Capital é a sede administrativa do estado.", "src": "Fonte: Geografia política.", "lv": 2}, {"cat": "Cidadania", "q": "O que é uma Unidade da Federação (UF)?", "a": ["Estado ou Distrito Federal", "Qualquer município do país", "Cada uma das cinco regiões", "Bairro de uma capital"], "correct": 0, "exp": "UF = estado/DF no Brasil.", "src": "Fonte: Conceitos administrativos.", "lv": 2}, {"cat": "Conceitos", "q": "O que é 'urbanização' (ideia geral)?", "a": ["Concentração da população nas cidades", "Aumento do número de rios", "Formação de dunas no litoral", "Plantio de florestas nativas no campo"], "correct": 0, "exp": "Urbanização envolve expansão e dinâmica urbana.", "src": "Fonte: Geografia humana.", "lv": 2}, {"cat": "Conceitos", "q": "Qual é um exemplo de infraestrutura urbana?", "a": ["Rede de esgoto", "Recife de coral", "Nascente de rio", "Copaíba nativa"], "correct": 0, "exp": "Infra urbana inclui saneamento, vias, iluminação etc.", "src": "Fonte: Geografia urbana.", "lv": 2}, {"cat": "Conceitos", "q": "O que é 'desmatamento'?", "a": ["Remoção da cobertura florestal", "Aumento das chuvas na floresta", "Plantio de mudas em área degradada", "Reforma de estradas na mata"], "correct": 0, "exp": "Desmatamento é a retirada de vegetação florestal.", "src": "Fonte: Conceitos ambientais.", "lv": 2}, {"cat": "Conceitos", "q": "O que é 'queimada' (no uso do solo)?", "a": ["Uso do fogo para limpar uma área", "Irrigação feita por aspersão", "Adubação verde com leguminosas", "Rotação de culturas no talhão"], "correct": 0, "exp": "Queimada é fogo aplicado para limpeza/renovação.", "src": "Fonte: Conceitos ambientais/agro.", "lv": 2}, {"cat": "Conceitos", "q": "O que é 'conservação ambiental'?", "a": ["Proteção e uso sustentável da natureza", "Exploração dos recursos sem limites", "Plantio exclusivo de eucalipto", "Fiscalização apenas da pesca"], "correct": 0, "exp": "Conservação envolve manter ecossistemas e serviços.", "src": "Fonte: Conceitos ambientais.", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa NÃO é uma Unidade da Federação (UF) do Brasil?", "a": ["Acre", "Paraná", "Uruguai", "Sergipe"], "correct": 2, "exp": "Uruguai é um país, não uma UF.", "src": "Fonte: Geografia política do Brasil.", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa está INCORRETA sobre capitais?", "a": ["Cuiabá é capital de MT", "Macapá é capital do AP", "Belém é capital do AM", "Aracaju é capital de SE"], "correct": 2, "exp": "Belém é capital do Pará (PA), não do Amazonas (AM).", "src": "Fonte: Geografia política do Brasil.", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa NÃO é um bioma brasileiro?", "a": ["Cerrado", "Pampa", "Taiga", "Caatinga"], "correct": 2, "exp": "Taiga é um bioma típico de altas latitudes no Hemisfério Norte.", "src": "Fonte: Biomas (conceitos gerais).", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa é um estado (e não uma região)?", "a": ["Nordeste", "Norte", "Centro-Oeste", "Tocantins"], "correct": 3, "exp": "Tocantins é um estado (UF).", "src": "Fonte: Divisão político-administrativa do Brasil.", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa NÃO é uma região do Brasil (IBGE)?", "a": ["Sudeste", "Noroeste", "Nordeste", "Centro-Oeste"], "correct": 1, "exp": "O Brasil tem 5 regiões: Norte, Nordeste, Centro-Oeste, Sudeste e Sul.", "src": "Fonte: IBGE (divisão regional).", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa está INCORRETA sobre o Pantanal?", "a": ["É uma planície alagável", "Tem ligação com o rio Paraguai", "Fica no Centro-Oeste", "É o maior bioma do Brasil"], "correct": 3, "exp": "O maior bioma do Brasil é a Amazônia; o Pantanal é o menor em área.", "src": "Fonte: Biomas do Brasil (conceitos gerais).", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa NÃO é um oceano?", "a": ["Atlântico", "Índico", "Pacífico", "Amazônico"], "correct": 3, "exp": "“Amazônico” se refere à região/bacia; não é oceano.", "src": "Fonte: Geografia geral.", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa NÃO é capital estadual?", "a": ["Fortaleza", "Curitiba", "Campinas", "Salvador"], "correct": 2, "exp": "Campinas é um município importante, mas não é capital.", "src": "Fonte: Geografia política do Brasil.", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa é uma UF da Região Sul?", "a": ["Piauí", "Pará", "Santa Catarina", "Mato Grosso do Sul"], "correct": 2, "exp": "Santa Catarina pertence à Região Sul.", "src": "Fonte: Divisão regional do Brasil (IBGE).", "lv": 2}, {"cat": "Pegadinhas", "q": "Qual alternativa NÃO é um indicador socioeconômico?", "a": ["PIB per capita", "IDH", "Índice de Gini", "Altitude"], "correct": 3, "exp": "Altitude é variável física/geográfica, não indicador socioeconômico.", "src": "Fonte: Conceitos de indicadores.", "lv": 2}, {"cat": "Indicadores", "q": "O índice de Gini mede principalmente:", "a": ["Renda média", "Desigualdade", "Tamanho do PIB", "Taxa de natalidade"], "correct": 1, "exp": "Gini é usado para desigualdade (quanto maior, mais desigual).", "src": "Fonte: Conceitos de economia/indicadores.", "lv": 2}, {"cat": "Indicadores", "q": "No Gini, valores mais próximos de 0 indicam:", "a": ["Maior desigualdade", "Maior igualdade", "Maior PIB", "Maior população"], "correct": 1, "exp": "Gini próximo de 0 sugere distribuição mais igualitária.", "src": "Fonte: Conceitos de economia/indicadores.", "lv": 2}, {"cat": "Indicadores", "q": "O que o PIB per capita tenta aproximar?", "a": ["PIB por pessoa", "PIB por km²", "PIB por município", "PIB por escola"], "correct": 0, "exp": "PIB per capita é uma média: PIB dividido pela população.", "src": "Fonte: Conceitos de economia.", "lv": 2}, {"cat": "Indicadores", "q": "Qual combinação é típica do IDH/IDHM?", "a": ["Educação, renda, longevidade", "Renda, clima e altitude do município", "Chuva, solo e relevo", "PIB, área e latitude"], "correct": 0, "exp": "IDH combina educação, renda e longevidade.", "src": "Fonte: Conceitos de desenvolvimento humano.", "lv": 2}, {"cat": "Indicadores", "q": "Qual indicador está MAIS ligado a saúde pública (de forma direta)?", "a": ["Expectativa de vida", "Área territorial", "Latitude", "Altitude média"], "correct": 0, "exp": "Expectativa de vida é um indicador de saúde/condições de vida.", "src": "Fonte: Conceitos de demografia/saúde.", "lv": 2}, {"cat": "Indicadores", "q": "Qual alternativa descreve melhor “inflação”?", "a": ["Queda generalizada de preços", "Aumento geral de preços", "Aumento de exportações", "Queda do PIB total"], "correct": 1, "exp": "Inflação é aumento generalizado e persistente dos preços.", "src": "Fonte: Conceitos de macroeconomia.", "lv": 2}, {"cat": "Indicadores", "q": "O que a taxa de desemprego mede?", "a": ["Pessoas que moram fora do país", "Pessoas sem carteira assinada", "Sem trabalho e procurando emprego", "Pessoas com renda alta"], "correct": 2, "exp": "Desemprego (conceito padrão) envolve pessoas sem trabalho e procurando trabalho.", "src": "Fonte: Conceitos de trabalho/IBGE (ideia geral).", "lv": 2}, {"cat": "Indicadores", "q": "Qual alternativa é um indicador ambiental urbano (ideia geral)?", "a": ["Arborização de vias", "PIB estadual por habitante", "Taxa SELIC", "Câmbio do dólar"], "correct": 0, "exp": "Arborização é um indicador de qualidade do espaço urbano.", "src": "Fonte: Conceitos urbanos/ambientais.", "lv": 2}, {"cat": "Indicadores", "q": "Qual alternativa costuma ser medida em porcentagem (%), não em reais?", "a": ["Taxa de alfabetização", "PIB nominal do estado", "Valor da produção de soja", "Arrecadação total de impostos"], "correct": 0, "exp": "Taxas sociais geralmente são percentuais.", "src": "Fonte: Conceitos de indicadores.", "lv": 2}, {"cat": "Indicadores", "q": "Qual alternativa está INCORRETA?", "a": ["PIB mede produção econômica", "IDH mede dimensões humanas", "Gini mede desigualdade", "PIB mede biodiversidade"], "correct": 3, "exp": "PIB não mede biodiversidade; isso seria outra família de indicadores.", "src": "Fonte: Conceitos de indicadores.", "lv": 2}, {"cat": "Brasil em números", "q": "População do Brasil (estimativa 2024, aprox.) fica mais perto de:", "a": ["190 milhões", "212 milhões", "235 milhões", "260 milhões"], "correct": 1, "exp": "O Brasil fica na casa de ~212 milhões na estimativa 2024 (aprox.).", "src": "Fonte: Estimativas populacionais (IBGE, ideia geral).", "lv": 2}, {"cat": "Brasil em números", "q": "A Região Norte tem população (aprox.) mais perto de:", "a": ["5 milhões", "12 milhões", "19 milhões", "35 milhões"], "correct": 2, "exp": "A Região Norte fica na ordem de ~19 milhões (aprox.).", "src": "Fonte: Estimativas regionais (IBGE, ideia geral).", "lv": 2}, {"cat": "Brasil em números", "q": "A Região Sudeste tem população (aprox.) mais perto de:", "a": ["40 milhões", "60 milhões", "90 milhões", "120 milhões"], "correct": 2, "exp": "O Sudeste fica perto de ~90 milhões (aprox.).", "src": "Fonte: Estimativas regionais (IBGE, ideia geral).", "lv": 2}, {"cat": "Economia (aprox.)", "q": "O PIB do Brasil costuma ser citado na ordem de:", "a": ["Milhões de reais", "Bilhões de reais", "Trilhões de reais", "Quatrilhões de reais"], "correct": 2, "exp": "PIB do Brasil é da ordem de trilhões (R$).", "src": "Fonte: Conceitos macroeconômicos (ordem de grandeza).", "lv": 2}, {"cat": "Economia (aprox.)", "q": "Qual UF é mais conhecida por ter o maior PIB estadual?", "a": ["São Paulo", "Goiás", "Mato Grosso do Sul", "Ceará"], "correct": 0, "exp": "Em geral, São Paulo lidera o PIB estadual.", "src": "Fonte: PIB por UF (IBGE, ideia geral).", "lv": 2}, {"cat": "Demografia (aprox.)", "q": "A taxa de urbanização do Brasil (aprox.) é mais perto de:", "a": ["35%", "55%", "85%", "98%"], "correct": 2, "exp": "O Brasil é majoritariamente urbano, perto de ~85% (aprox.).", "src": "Fonte: Demografia brasileira (ordem de grandeza).", "lv": 2}, {"cat": "Agro (aprox.)", "q": "A soja brasileira é medida principalmente em:", "a": ["Litros", "Toneladas", "Metros cúbicos", "Quilômetros"], "correct": 1, "exp": "Produções agrícolas de grãos são reportadas em toneladas.", "src": "Fonte: Conceitos de estatísticas agrícolas.", "lv": 2}, {"cat": "Pecuária (aprox.)", "q": "O rebanho bovino do Brasil é da ordem de:", "a": ["20 milhões", "80 milhões", "200 milhões", "900 milhões"], "correct": 2, "exp": "O Brasil tem rebanho bovino na casa de centenas de milhões (aprox.).", "src": "Fonte: Conceitos/ordem de grandeza (PPM/IBGE, geral).", "lv": 2}, {"cat": "Economia (aprox.)", "q": "Qual alternativa é mais plausível para inflação anual típica (em anos “normais”)?", "a": ["0,2%", "4%", "40%", "140%"], "correct": 1, "exp": "Inflação anual típica costuma ficar em poucos pontos percentuais.", "src": "Fonte: Conceitos macroeconômicos.", "lv": 2}, {"cat": "Economia (aprox.)", "q": "Qual alternativa é uma unidade comum para taxa de juros no Brasil?", "a": ["% ao ano", "km por hora", "litros por dia", "kg por hectare"], "correct": 0, "exp": "Juros (SELIC e outras) são normalmente expressos em % ao ano.", "src": "Fonte: Conceitos de economia.", "lv": 2}, {"cat": "Geografia geral", "q": "Qual linha imaginária divide a Terra em Hemisfério Norte e Sul?", "a": ["Trópico de Capricórnio", "Trópico de Câncer", "Linha do Equador", "Meridiano de Greenwich"], "correct": 2, "exp": "A Linha do Equador divide Norte e Sul.", "src": "Fonte: Geografia geral.", "lv": 1}, {"cat": "Geografia geral", "q": "O Meridiano de Greenwich está ligado principalmente a:", "a": ["Fusos horários", "Placas tectônicas", "Tipos de solo", "Correntes oceânicas"], "correct": 0, "exp": "Greenwich é referência para longitude e fusos.", "src": "Fonte: Geografia geral.", "lv": 1}, {"cat": "Brasil", "q": "Qual destas capitais está na Região Norte?", "a": ["Manaus", "Salvador", "Curitiba", "Goiânia"], "correct": 0, "exp": "Manaus (AM) é capital na Região Norte.", "src": "Fonte: Divisão regional do Brasil.", "lv": 1}, {"cat": "Brasil", "q": "Qual destas capitais está na Região Nordeste?", "a": ["Fortaleza", "Porto Alegre", "Cuiabá", "Florianópolis"], "correct": 0, "exp": "Fortaleza (CE) é capital nordestina.", "src": "Fonte: Divisão regional do Brasil.", "lv": 1}, {"cat": "Brasil", "q": "Qual destas capitais está na Região Sul?", "a": ["Teresina", "Florianópolis", "Belém", "Porto Velho"], "correct": 1, "exp": "Florianópolis (SC) é capital da Região Sul.", "src": "Fonte: Divisão regional do Brasil.", "lv": 1}, {"cat": "Brasil", "q": "Qual destas capitais está na Região Sudeste?", "a": ["Vitória", "Aracaju", "Manaus", "Campo Grande"], "correct": 0, "exp": "Vitória (ES) é capital do Sudeste.", "src": "Fonte: Divisão regional do Brasil.", "lv": 1}, {"cat": "Brasil", "q": "Qual destas capitais está na Região Centro-Oeste?", "a": ["Campo Grande", "Salvador", "Rio Branco", "João Pessoa"], "correct": 0, "exp": "Campo Grande (MS) é capital do Centro-Oeste.", "src": "Fonte: Divisão regional do Brasil.", "lv": 1}, {"cat": "Relevo", "q": "A palavra “planície” sugere mais:", "a": ["Área baixa e relativamente plana", "Área muito montanhosa e íngreme", "Área vulcânica ativa", "Área coberta de gelo permanente"], "correct": 0, "exp": "Planície tende a ser baixa e plana (em geral).", "src": "Fonte: Conceitos de geomorfologia.", "lv": 1}, {"cat": "Hidrografia", "q": "“Afluente” é:", "a": ["Rio que deságua em outro", "Rio que nasce no mar", "Lago salgado", "Canal artificial sempre"], "correct": 0, "exp": "Afluente é um rio que entra em outro.", "src": "Fonte: Conceitos de hidrografia.", "lv": 1}, {"cat": "Cartografia", "q": "Qual alternativa é uma escala cartográfica?", "a": ["1:50.000", "50 km/h", "50 °C", "50 mg/L"], "correct": 0, "exp": "Escala é uma razão do tipo 1:n.", "src": "Fonte: Cartografia básica.", "lv": 1}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é um grão/cereal?", "a": ["Milho", "Cacau", "Uva", "Caju"], "correct": 0, "exp": "Milho é cereal.", "src": "Fonte: Conceitos de agro.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é uma oleaginosa?", "a": ["Soja", "Trigo", "Arroz", "Aveia"], "correct": 0, "exp": "Soja é oleaginosa.", "src": "Fonte: Conceitos de agro.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é mais ligada à pecuária leiteira?", "a": ["Ordenha", "Colheita", "Poda", "Irrigação"], "correct": 0, "exp": "Ordenha está diretamente ligada à produção de leite.", "src": "Fonte: Conceitos de pecuária.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é mais ligada à pecuária de corte?", "a": ["Abate", "Fermentação", "Germinação", "Enxertia"], "correct": 0, "exp": "Abate é etapa típica da cadeia de carne bovina.", "src": "Fonte: Conceitos de pecuária.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa NÃO é um produto típico do agronegócio brasileiro?", "a": ["Soja", "Café", "Borracha", "Salmão"], "correct": 3, "exp": "Salmão é mais associado a países frios; no Brasil não é típico.", "src": "Fonte: Conceitos gerais de produção.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é uma prática de conservação do solo?", "a": ["Plantio direto", "Solo exposto", "Queima anual", "Retirar cobertura"], "correct": 0, "exp": "Plantio direto ajuda a manter cobertura e reduzir erosão.", "src": "Fonte: Boas práticas agrícolas.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é um sistema de produção animal?", "a": ["Confinamento", "Hidroponia", "Silvicultura", "Mineradora"], "correct": 0, "exp": "Confinamento é sistema de engorda animal.", "src": "Fonte: Conceitos de pecuária.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual alternativa é uma cultura perene (em geral)?", "a": ["Café", "Milho", "Arroz", "Soja"], "correct": 0, "exp": "Café é perene; milho/arroz/soja são anuais.", "src": "Fonte: Conceitos de culturas.", "lv": 2}, {"cat": "Agro & Pecuária", "q": "Qual unidade NÃO serve para medir a produção de leite?", "a": ["Litros", "Mil litros", "Cabeças", "Bilhões de litros"], "correct": 2, "exp": "\"Cabeças\" mede o tamanho do rebanho, não o volume de leite produzido.", "src": "Fonte: Conceitos de estatísticas agropecuárias.", "lv": 2}];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const LV=[null,
+  {nome:'Mapa do Brasil',desc:'Capitais, regiões, siglas, rios, relevo, biomas e clima.',ac:10,erro:10},
+  {nome:'Conceitos e indicadores',desc:'PIB, IDH, Gini, agro, pecuária, conservação e pegadinhas.',ac:20,erro:15},
+  {nome:'Brasil em dados 2023-2024',desc:'Números oficiais do IBGE e de outras fontes, com a fonte em cada pergunta.',ac:30,erro:20}];
+const POR=10,META=7,TEMPO=25;
+let S={lv:0,fila:[],i:0,pts:0,ac:0,seq:0,maxSeq:0,perdas:0,timer:null,t0:0,trava:false};
+let libera=1;try{libera=Math.max(1,+localStorage.getItem('geoagro_libera')||1);}catch(e){}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+function tela(id){['scMenu','scQuiz','scEnd'].forEach(x=>$(x).hidden=x!==id);}
+function hud(){$('hPts').textContent=S.pts;$('hLv').textContent=S.lv||'–';$('hAc').textContent=S.ac+'/'+(S.lv?S.i+(S.trava?1:0):0);$('hSeq').textContent=S.seq;}
+function menu(){
+  tela('scMenu');S.lv=0;hud();
+  $('levels').innerHTML=[1,2,3].map(n=>{const L=LV[n],tot=BANK.filter(q=>q.lv===n).length,ok=n<=libera;
+    return `<button class="lvl" data-n="${n}" ${ok?'':'disabled'}><span class="n">${n}</span><span><b>${L.nome}</b><small>${L.desc} ${tot} perguntas no banco.</small></span><span class="st">${ok?'Jogar':'Bloqueado'}</span></button>`;}).join('');
+  document.querySelectorAll('.lvl').forEach(b=>b.onclick=()=>iniciar(+b.dataset.n));
+}
+function iniciar(n){
+  S={lv:n,fila:shuffle(BANK.filter(q=>q.lv===n)).slice(0,POR).map(q=>{const o=shuffle(q.a.map((t,i)=>({t,i})));return {...q,opts:o.map(x=>x.t),c:o.findIndex(x=>x.i===q.correct)};}),i:0,pts:0,ac:0,seq:0,maxSeq:0,perdas:0,timer:null,trava:false};
+  tela('scQuiz');render();
+}
+function render(){
+  const q=S.fila[S.i];S.trava=false;
+  $('qCat').textContent=q.cat;$('qN').textContent=(S.i+1)+'/'+S.fila.length;$('pBar').style.width=(100*S.i/S.fila.length)+'%';
+  $('qTxt').textContent=q.q;$('exp').hidden=true;$('bNext').hidden=true;
+  $('opts').innerHTML=q.opts.map((t,i)=>`<button class="opt" data-i="${i}"><span class="k">${'ABCD'[i]}</span><span>${esc(t)}</span></button>`).join('');
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>responder(+b.dataset.i));
+  S.t0=Date.now();clearInterval(S.timer);
+  S.timer=setInterval(()=>{const r=Math.max(0,TEMPO-(Date.now()-S.t0)/1000);$('tBar').style.width=(100*r/TEMPO)+'%';if(r<=0)responder(-1);},100);
+  hud();
+}
+function responder(k){
+  if(S.trava)return;S.trava=true;clearInterval(S.timer);
+  const q=S.fila[S.i],L=LV[S.lv],ok=k===q.c,rest=Math.max(0,TEMPO-(Date.now()-S.t0)/1000);
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.c)b.classList.add('ok');else if(i===k)b.classList.add('no');});
+  let msg;
+  if(ok){S.ac++;S.seq++;S.maxSeq=Math.max(S.maxSeq,S.seq);const g=L.ac+Math.round(rest/TEMPO*L.ac*.5)+(S.seq>=3?5:0);S.pts+=g;msg=`<div class="t ok">Correto: +${g} pontos</div>`;}
+  else{S.seq=0;S.pts=Math.max(0,S.pts-L.erro);S.perdas+=L.erro;msg=`<div class="t no">${k<0?'Tempo esgotado':'Resposta errada'}: −${L.erro} pontos</div>`;}
+  $('exp').innerHTML=msg+esc(q.exp)+(q.src?`<small>${esc(q.src)}</small>`:'');$('exp').hidden=false;
+  $('bNext').textContent=S.i+1>=S.fila.length?'Ver resultado':'Próxima';$('bNext').hidden=false;hud();
+}
+$('bNext').onclick=()=>{S.i++;if(S.i>=S.fila.length)fim();else render();};
+let salvo=false;
+function fim(){
+  const passou=S.ac>=META;
+  if(passou&&S.lv<3&&libera<S.lv+1){libera=S.lv+1;try{localStorage.setItem('geoagro_libera',libera);}catch(e){}}
+  salvo=false;
+  $('scEnd').innerHTML=`<h2 style="color:var(--dark)">${passou?'Meta atingida!':'Meta não atingida'}</h2>
+    <p class="small">Nível ${S.lv}: ${LV[S.lv].nome}</p><div class="big">${S.pts}</div><p class="small">pontos</p>
+    <div class="tally"><span>Acertos: ${S.ac} de ${S.fila.length} (meta ${META})</span><span>Maior sequência: ${S.maxSeq}</span><span class="neg">Perdas: −${S.perdas}</span></div>
+    <p>${passou?(S.lv<3?'O nível '+(S.lv+1)+' foi liberado.':'Você completou o nível mais difícil.'):'Leia as explicações e tente de novo.'}</p>
+    <div class="savebox"><input id="pName" maxlength="20" placeholder="Seu nome"><button class="btn" id="bS">Salvar no ranking</button></div>
+    <p class="small" id="sSt"></p>
+    <div class="row"><button class="btn" id="bAg">Jogar de novo</button><button class="btn ghost" id="bMenu">Escolher nível</button></div>`;
+  tela('scEnd');$('bS').onclick=salvar;$('bAg').onclick=()=>iniciar(S.lv);$('bMenu').onclick=menu;
+}
+const firebaseConfig={apiKey:"AIzaSyCbXi3UCVl8oLleBzGb6DqWSxbZmZU2yDQ",authDomain:"jogos-ranking.firebaseapp.com",databaseURL:"https://jogos-ranking-default-rtdb.firebaseio.com",
+  projectId:"jogos-ranking",storageBucket:"jogos-ranking.firebasestorage.app",messagingSenderId:"958784915420",appId:"1:958784915420:web:4212d3ad278f02d600f119"};
+const GAME_ID="geoagro-quiz-br";let db=null,fs=null;
+(async()=>{try{const a=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");const f=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  db=f.getFirestore(a.initializeApp(firebaseConfig));fs=f;carregar();}catch(e){$('rankList').innerHTML='<li><span>Ranking indisponível sem internet.</span></li>';$('rankNote').textContent='O quiz funciona normalmente. O ranking volta quando houver conexão.';}})();
+async function carregar(){if(!db)return;try{const q=fs.query(fs.collection(db,'games',GAME_ID,'scores'),fs.orderBy('score','desc'),fs.limit(10));const sn=await fs.getDocs(q);const r=[];sn.forEach(d=>r.push(d.data()));
+  $('rankNote').textContent='Maior pontuação de uma rodada. Ao lado, o nível jogado.';
+  $('rankList').innerHTML=r.length?r.map((x,i)=>`<li><span><span class="pos">${i+1}º</span>${esc(x.name||'?')}</span><span>${(Number(x.score)||0).toLocaleString('pt-BR')} pts · ${esc(x.level||'')}</span></li>`).join(''):'<li><span>Seja o primeiro do ranking!</span></li>';
+  }catch(e){$('rankList').innerHTML='<li><span>Não foi possível carregar o ranking.</span></li>';}}
+async function salvar(){if(salvo)return;const nome=$('pName').value.trim(),st=$('sSt');
+  if(!nome){st.textContent='Digite seu nome primeiro.';return;}if(!db){st.textContent='Sem conexão com o ranking. O resultado não foi enviado.';return;}
+  $('bS').disabled=true;try{await fs.addDoc(fs.collection(db,'games',GAME_ID,'scores'),{name:nome.slice(0,20),score:S.pts,level:'Nível '+S.lv,ts:fs.serverTimestamp()});
+  salvo=true;st.textContent='Salvo no Ranking Global!';carregar();}catch(e){$('bS').disabled=false;st.textContent='Erro ao salvar. Tente de novo.';}}
+menu();
+window.__qb={get S(){return S},responder};
+</script>
 </body>
 </html>
